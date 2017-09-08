@@ -1,0 +1,27 @@
+{
+  "name": "toss-puppeteer",
+  "version": "1.0.0",
+  "description": "Try all kinds of toss about using GoogleChrome puppeteer",
+  "main": "src/index.js",
+  "scripts": {
+    "blog": "node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nicejade/toss-puppeteer.git"
+  },
+  "keywords": [
+    "testing"
+  ],
+  "author": "nicejade",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nicejade/toss-puppeteer/issues"
+  },
+  "homepage": "https://github.com/nicejade/toss-puppeteer#readme",
+  "devDependencies": {
+    "chalk": "^2.1.0",
+    "puppeteer": "^0.10.2",
+    "shelljs": "^0.7.8"
+  }
+}
