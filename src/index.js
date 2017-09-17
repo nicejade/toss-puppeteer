@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer')
 const chalk = require('chalk')
 
-const $util = require('./util.js')
+const $util = require('./helper/util.js')
 const $config = require('./config.js')
 
 puppeteer.launch({headless: false}).then(async browser => {
@@ -15,11 +15,11 @@ puppeteer.launch({headless: false}).then(async browser => {
         if (await $util.isLogin(page)) {
         } else {
           $util.launchLogin(page).then(() => {
-            $util.executeWorkarea(page)
+            $util.executeSharePlan(browser, page)
           })
         }
       } else {
-        $util.executeWorkarea(page)
+        $util.executeSharePlan(browser, page)
       }
     })
 
@@ -39,6 +39,6 @@ puppeteer.launch({headless: false}).then(async browser => {
     console.log(error)
   })
 
-  await page.goto($config.currentPageUrl)
+  await page.goto($config.shareTargetPath)
   // browser.close()
 })

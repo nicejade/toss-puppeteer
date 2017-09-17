@@ -23,5 +23,9 @@
     "chalk": "^2.1.0",
     "puppeteer": "^0.10.2",
     "shelljs": "^0.7.8"
+  },
+  "dependencies": {
+    "axios": "^0.16.2",
+    "cheerio": "^1.0.0-rc.2"
   }
 }

@@ -2,7 +2,8 @@ require('shelljs/global')
 env.NODE_ENV = process.env.NODE_ENV || 'testing'
 
 let screenshotPath = './screenshot/',
-  currentPageUrl = 'https://jeffjade.com/',
+  currentPageUrl = 'https://jeffjade.com/archives/page/',
+  shareTargetPath = 'http://blogread.cn/news/',
   loginUserName = '',
   loginUserPwd = ''
 
@@ -12,6 +13,7 @@ mkdir('-p', screenshotPath)
 
 module.exports = {
   currentPageUrl: currentPageUrl,
+  shareTargetPath: shareTargetPath,
   screenshotPath: screenshotPath,
   // Request Logon Approximate Wait Time
   requestLoginWaitTime: 3000,
