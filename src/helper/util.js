@@ -3,7 +3,7 @@ const axios = require('axios')
 const cheerio = require('cheerio')
 
 /**
-// secretConfig 大致样子，如下：
+// 帐号密码，你需要自己新增文件😊；secretConfig 配置大致样子，如下：
 module.exports = {
   weibo: {
     account: 'your-weibo-account',
