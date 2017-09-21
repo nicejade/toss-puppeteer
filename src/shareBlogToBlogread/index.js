@@ -8,7 +8,7 @@ $util.setConfig($config)
 
 puppeteer.launch({ headless: false }).then(async browser => {
   let page = await browser.newPage()
-  page.setViewport({ width: 1536, height: 900 })
+  page.setViewport({ width: 1024, height: 2048 })
 
   page
         .waitForSelector('img')

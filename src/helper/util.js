@@ -44,7 +44,9 @@ $util.launchLogin = async(page) => {
   await page.type(secretConfig.weibo.password, { delay: 20 })
 
   let loginBtn = await page.$('.WB_btn_login')
-  await loginBtn.click()
+  await loginBtn.click({delay: 20})
+
+  await page.waitFor(600)
 }
 
 $util.getCurrentFullPath = (page) => {
