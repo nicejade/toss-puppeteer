@@ -50,7 +50,7 @@ const getContentYouWantShare = async(browser) => {
   let page = await browser.newPage()
   page.setViewport({ width: 1536, height: 900 })
 
-  let linkSuffix = pageNum ? `page/${pageNum}` : ''
+  let linkSuffix = pageNum > 1 ? `page/${pageNum}` : ''
   await page.goto($config.currentPageUrl + linkSuffix)
 
   await page.evaluate(async() => {
@@ -58,6 +58,7 @@ const getContentYouWantShare = async(browser) => {
     let itemLimit = 10
     let itemNum = Math.round(Math.random() * (itemLimit - 1) + 1)
 
+    itemNum = Math.ceil(itemNum, targetLinkList.length)
     targetLinkList.forEach((item, index) => {
       if (itemNum === index) {
         item.click()
@@ -65,20 +66,19 @@ const getContentYouWantShare = async(browser) => {
     })
   })
 
-  $util.executeScreenshot(page)
-
   await $util.executeDelay(2000)
+
+  $util.executeScreenshot(page)
 
   let currentUrl = await page.url()
   let needShareContent = await $util.getWebPageInfo(currentUrl)
   needShareContent.url = currentUrl
 
-  page.close()
+  // page.close()
   return needShareContent
 }
 
 const executeSharePlan = async(browser, page) => {
-    // await $util.executeDelay($config.requestLoginWaitTime)
   let shareContent = await getContentYouWantShare(browser)
 
   await page.evaluate(async() => {
@@ -95,7 +95,7 @@ const executeSharePlan = async(browser, page) => {
   // -----------微博登录---------;
   await $util.launchLogin(page)
 
-  await $util.executeDelay(3000)
+  await $util.executeDelay($config.requestLoginWaitTime)
 
   let titleInput = await page.$('[name=title]')
   await titleInput.click()

@@ -35,21 +35,16 @@ $util.isLogin = (page) => {
 }
 
 $util.launchLogin = async(page) => {
-  return new Promise(async(resolve, reject) => {
-    await $util.executeDelay($config.requestLoginWaitTime)
+  let loginUserInput = await page.$('#userId')
+  await loginUserInput.click()
+  await page.type(secretConfig.weibo.account, { delay: 20 })
 
-    let loginUserInput = await page.$('#userId')
-    await loginUserInput.click()
-    await page.type(secretConfig.weibo.account, { delay: 20 })
+  let loginPwdInput = await page.$('#passwd')
+  await loginPwdInput.click()
+  await page.type(secretConfig.weibo.password, { delay: 20 })
 
-    let loginPwdInput = await page.$('#passwd')
-    await loginPwdInput.click()
-    await page.type(secretConfig.weibo.password, { delay: 20 })
-
-    let loginBtn = await page.$('.WB_btn_login')
-    await loginBtn.click()
-    resolve(true)
-  })
+  let loginBtn = await page.$('.WB_btn_login')
+  await loginBtn.click()
 }
 
 $util.getCurrentFullPath = (page) => {
@@ -66,6 +61,7 @@ $util.getCurrentFullPath = (page) => {
  */
 $util.isLoadingFinished = (page) => {
   return page.evaluate(() => {
+    // document.readyState: loading / 加载；interactive / 互动；complete / 完成
     return document.readyState === 'complete' || document.readyState === 'interactive'
   })
 }
