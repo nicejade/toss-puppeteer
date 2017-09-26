@@ -64,7 +64,7 @@ $util.getCurrentFullPath = (page) => {
 $util.isLoadingFinished = (page) => {
   return page.evaluate(() => {
     // document.readyState: loading / 加载；interactive / 互动；complete / 完成
-    return document.readyState === 'complete' || document.readyState === 'interactive'
+    return document.readyState === 'complete'
   })
 }
 
@@ -95,7 +95,10 @@ $util.onListenUrlChange = async(page, callback) => {
   }
 }
 
-$util.executeDelay = function (delay) {
+/*
+  Equivalent to the default method: page.waitFor(Timeout)
+ */
+$util.waitForTimeout = (delay) => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       try {

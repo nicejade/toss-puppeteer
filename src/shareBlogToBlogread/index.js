@@ -55,10 +55,10 @@ const getContentYouWantShare = async(browser) => {
 
   await page.evaluate(async() => {
     let targetLinkList = [...document.querySelectorAll('#archive-page .post a')]
-    let itemLimit = 10
+    let itemLimit = targetLinkList.length
     let itemNum = Math.round(Math.random() * (itemLimit - 1) + 1)
 
-    itemNum = Math.ceil(itemNum, targetLinkList.length)
+    itemNum = Math.ceil(itemNum, itemLimit)
     targetLinkList.forEach((item, index) => {
       if (itemNum === index) {
         item.click()
@@ -66,7 +66,8 @@ const getContentYouWantShare = async(browser) => {
     })
   })
 
-  await $util.executeDelay(2000)
+  await $util.waitForTimeout($config.pageCommonWaitTime)
+  // await $util.waitForLoadComplete(page)
 
   $util.executeScreenshot(page)
 
@@ -90,12 +91,12 @@ const executeSharePlan = async(browser, page) => {
     })
   })
 
-  await $util.executeDelay(2000)
+  await $util.waitForTimeout($config.pageCommonWaitTime)
 
   // -----------微博登录---------;
   await $util.launchLogin(page)
 
-  await $util.executeDelay($config.requestLoginWaitTime)
+  await $util.waitForTimeout($config.requestLoginWaitTime)
 
   let titleInput = await page.$('[name=title]')
   await titleInput.click()
