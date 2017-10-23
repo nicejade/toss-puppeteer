@@ -11,18 +11,18 @@ puppeteer.launch({ headless: false }).then(async browser => {
   page.setViewport({ width: 1024, height: 2048 })
 
   page
-        .waitForSelector('img')
-        .then(async() => {
-          if ($util.isNeedLogin) {
-            if (await $util.isLogin(page)) {} else {
-              $util.launchLogin(page).then(() => {
-                executeSharePlan(browser, page)
-              })
-            }
-          } else {
+    .waitForSelector('img')
+    .then(async() => {
+      if ($util.isNeedLogin) {
+        if (await $util.isLogin(page)) {} else {
+          $util.launchLogin(page).then(() => {
             executeSharePlan(browser, page)
-          }
-        })
+          })
+        }
+      } else {
+        executeSharePlan(browser, page)
+      }
+    })
 
   page.on('requestfinished', result => {
     if (result.url.includes('clustrmaps.com')) {

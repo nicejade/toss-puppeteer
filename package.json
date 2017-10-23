@@ -4,7 +4,8 @@
   "description": "Try all kinds of toss about using GoogleChrome puppeteer",
   "main": "src/index.js",
   "scripts": {
-    "shareBlogToBlogread": "node src/shareBlogToBlogread/index.js"
+    "shareBlogToBlogread": "node src/shareBlogToBlogread/index.js",
+    "printWebsiteToPDF": "node src/printWebsiteToPDF/index.js"
   },
   "repository": {
     "type": "git",
