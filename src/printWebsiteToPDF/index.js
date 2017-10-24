@@ -35,7 +35,7 @@ puppeteer.launch({ headless: false }).then(async browser => {
   await page.goto($config.targetWebsite)
 })
 
-const executePrintPlan = async(browser, page) => {
+const executePrintPlan = async (browser, page) => {
   let numList = await page.evaluate(async() => {
     let pageNumList = [...document.querySelectorAll('#page-nav .page-number')]
     return pageNumList.map(item => {
@@ -44,4 +44,22 @@ const executePrintPlan = async(browser, page) => {
   })
   // 获取到分页总数目(从左到右，有小到大，所以可以如下处置)
   let totalNum = +numList[numList.length - 1]
+  let pageLinkArr = [$config.targetWebsite]
+  for (let i = 2; i <= totalNum; i++) {
+    pageLinkArr.push(`{$config.targetWebsite}/page/${i}`)
+  }
+
+  let articleLinkArr = []
+  pageLinkArr.forEach(async (item) => {
+    page = await browser.newPage()
+    await page.goto(item)
+    await page.waitFor(2000)
+    let tempList = await page.evaluate(async() => {
+      let aTagList = [...document.querySelectorAll('#archive-page .post a')]
+      return aTagList.map(item => {
+        return item.href
+      })
+    })
+    articleLinkArr.concat(tempList)
+  })
 }
