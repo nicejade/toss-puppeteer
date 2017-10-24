@@ -1,4 +1,6 @@
 const puppeteer = require('puppeteer')
+const cheerio = require('cheerio')
+const axios = require('axios')
 const chalk = require('chalk')
 
 const $util = require('./../helper/util.js')
@@ -35,6 +37,27 @@ puppeteer.launch({ headless: false }).then(async browser => {
   await page.goto($config.targetWebsite)
 })
 
+const getArticleLink = (url) => {
+  return new Promise((resolve, reject) => {
+    return axios.get(url).then((res) => {
+      try {
+        let $ = cheerio.load(res.data)
+        let aHrefList = []
+        $('#archive-page .post a').each(function (i, e) {
+          aHrefList.push($config.targetOrigin + $(e).attr('href'))
+        })
+      } catch (err) {
+        console.log('Opps, Download Error Occurred !' + err)
+        resolve({})
+      }
+    }).catch(err => {
+      console.log('Opps, Axios Error Occurred !' + err)
+      resolve({})
+    })
+  })
+}
+
+
 const executePrintPlan = async (browser, page) => {
   let numList = await page.evaluate(async() => {
     let pageNumList = [...document.querySelectorAll('#page-nav .page-number')]
@@ -46,20 +69,17 @@ const executePrintPlan = async (browser, page) => {
   let totalNum = +numList[numList.length - 1]
   let pageLinkArr = [$config.targetWebsite]
   for (let i = 2; i <= totalNum; i++) {
-    pageLinkArr.push(`{$config.targetWebsite}/page/${i}`)
+    pageLinkArr.push(`${$config.targetWebsite}/page/${i}`)
   }
 
   let articleLinkArr = []
-  pageLinkArr.forEach(async (item) => {
-    page = await browser.newPage()
-    await page.goto(item)
-    await page.waitFor(2000)
-    let tempList = await page.evaluate(async() => {
-      let aTagList = [...document.querySelectorAll('#archive-page .post a')]
-      return aTagList.map(item => {
-        return item.href
+  await pageLinkArr.forEach((item) => {
+    !(function (citem) {
+      getArticleLink(citem).then(result => {
+        articleLinkArr.concat(result)
       })
-    })
-    articleLinkArr.concat(tempList)
+    }(item))
   })
+  await page.waitFor(10000)
+  console.log(articleLinkArr)
 }
