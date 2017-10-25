@@ -43,32 +43,8 @@ puppeteer.launch({ headless: true }).then(async browser => {
   await page.goto($config.targetWebsite)
 })
 
-const getArticleLink = (url) => {
-  return new Promise((resolve, reject) => {
-    return axios.get(url).then((res) => {
-      try {
-        let $ = cheerio.load(res.data)
-        let aHrefList = []
-        $('#archive-page .post a').each(function (i, e) {
-          let item = {
-            href: $(e).attr('href'),
-            title: $(e).attr('title')
-          }
-          aHrefList.push(item)
-        })
-        return resolve(aHrefList)
-      } catch (err) {
-        console.log('Opps, Download Error Occurred !' + err)
-        resolve({})
-      }
-    }).catch(err => {
-      console.log('Opps, Axios Error Occurred !' + err)
-      resolve({})
-    })
-  })
-}
-
 const executeCrawlPlan = async (browser, page) => {
+  $util.printWithColor(`Start crawling all article links...`, 'success')
   let numList = await page.evaluate(async() => {
     let pageNumList = [...document.querySelectorAll('#page-nav .page-number')]
     return pageNumList.map(item => {
@@ -97,20 +73,48 @@ const executeCrawlPlan = async (browser, page) => {
   })
 }
 
-let concurrencyCount = 0
+const getArticleLink = (url) => {
+  return new Promise((resolve, reject) => {
+    return axios.get(url).then((res) => {
+      try {
+        let $ = cheerio.load(res.data)
+        let aHrefList = []
+        $util.printWithColor(`The article has been crawled as follows：`, 'success')
+        $('#archive-page .post a').each(function (i, e) {
+          let item = {
+            href: $(e).attr('href'),
+            title: $(e).attr('title')
+          }
+          $util.printWithColor(`${item.title}: ${item.href}`)
+          aHrefList.push(item)
+        })
+        return resolve(aHrefList)
+      } catch (err) {
+        console.log('Opps, Download Error Occurred !' + err)
+        resolve({})
+      }
+    }).catch(err => {
+      console.log('Opps, Axios Error Occurred !' + err)
+      resolve({})
+    })
+  })
+}
+
+let concurrentCount = 0
 const printPageToPdf = async (browser, item, callback) => {
   page = await browser.newPage()
-  concurrencyCount++
-  console.log(`现在的并发数是: ${concurrencyCount},正在打印的是：${item.href}`)
+  concurrentCount++
+  $util.printWithColor(`Now the number of concurrent is: ${concurrentCount}, What is printing is:：${item.href}`, 'success')
   await page.goto($config.targetOrigin + item.href)
   await page.waitFor(1000)
   $util.executePrintToPdf(page)
   await page.waitFor(1000)
-  concurrencyCount--
+  concurrentCount--
   callback()
 }
 
 const executePrintPlan = async (browser, source) => {
+  $util.printWithColor(`Okay, Start the print operation.`, 'success')
   mapLimit(source, 5, (item, callback) => {
     printPageToPdf(browser, item, callback)
   })

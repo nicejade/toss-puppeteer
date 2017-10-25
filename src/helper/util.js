@@ -2,6 +2,12 @@ const chalk = require('chalk')
 const axios = require('axios')
 const cheerio = require('cheerio')
 
+const typeList = {
+  success: chalk.green,
+  error: chalk.bold.red,
+  warning: chalk.keyword('orange')
+}
+
 /**
 // 帐号密码，你需要自己新增文件😊；secretConfig 配置大致样子，如下：
 module.exports = {
@@ -19,6 +25,11 @@ let $util = {},
 
 $util.setConfig = (config) => {
   $config = config
+}
+
+$util.printWithColor = (str, type = '', color = 'white') => {
+  let colorFunc = typeList[type] || chalk[color]
+  console.log(colorFunc(str))
 }
 
 $util.isLogin = (page) => {
@@ -74,7 +85,7 @@ $util.executeScreenshot = async(page) => {
     await page.screenshot({ path: `${$config.screenshotPath}${pageTitle}.png`, type: 'png' })
 
     let currentUrl = await $util.getCurrentFullPath(page)
-    console.log(chalk.magenta(`${currentUrl} 已截屏并保存为：${pageTitle}.png`))
+    console.log(chalk.magenta(`${currentUrl} Has been screened and saved as：${pageTitle}.png`))
   } else {
     setTimeout(() => {
       $util.executeScreenshot(page)
@@ -85,8 +96,8 @@ $util.executeScreenshot = async(page) => {
 $util.executePrintToPdf = async(page) => {
   if (await $util.isLoadingFinished(page)) {
     let pageTitle = await page.title()
-    await page.pdf({path: `./dist/pdf/${pageTitle}.pdf`})
-    console.log(chalk.magenta(`已经将 ${pageTitle} 页面完成 PDF 打印`))
+    await page.pdf({path: `${$config.savePdfPath}${pageTitle}.pdf`})
+    console.log(chalk.magenta(`Pages that have been printed in PDF format is: ${pageTitle}`))
     page.close()
   } else {
     setTimeout(() => {
