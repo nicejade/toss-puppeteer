@@ -2,20 +2,26 @@ const puppeteer = require('puppeteer')
 const cheerio = require('cheerio')
 const axios = require('axios')
 const chalk = require('chalk')
+const mapLimit = require('async/mapLimit')
 
 const $util = require('./../helper/util.js')
 const $config = require('./config.js')
 
 $util.setConfig($config)
 
-puppeteer.launch({ headless: false }).then(async browser => {
+/*
+  headless: true 注意产生PDF格式目前仅支持Chrome无头版。 (update@2017-10-25)
+  NOTE Generating a pdf is currently only supported in Chrome headless.
+  https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#pagepdfoptions
+ */
+puppeteer.launch({ headless: true }).then(async browser => {
   let page = await browser.newPage()
   page.setViewport({ width: 1024, height: 2048 })
 
   page
     .waitForSelector('img')
     .then(async() => {
-      executePrintPlan(browser, page)
+      executeCrawlPlan(browser, page)
     })
 
   page.on('requestfinished', result => {
@@ -44,8 +50,13 @@ const getArticleLink = (url) => {
         let $ = cheerio.load(res.data)
         let aHrefList = []
         $('#archive-page .post a').each(function (i, e) {
-          aHrefList.push($config.targetOrigin + $(e).attr('href'))
+          let item = {
+            href: $(e).attr('href'),
+            title: $(e).attr('title')
+          }
+          aHrefList.push(item)
         })
+        return resolve(aHrefList)
       } catch (err) {
         console.log('Opps, Download Error Occurred !' + err)
         resolve({})
@@ -57,8 +68,7 @@ const getArticleLink = (url) => {
   })
 }
 
-
-const executePrintPlan = async (browser, page) => {
+const executeCrawlPlan = async (browser, page) => {
   let numList = await page.evaluate(async() => {
     let pageNumList = [...document.querySelectorAll('#page-nav .page-number')]
     return pageNumList.map(item => {
@@ -73,13 +83,37 @@ const executePrintPlan = async (browser, page) => {
   }
 
   let articleLinkArr = []
+  let statisticsCount = 0
   await pageLinkArr.forEach((item) => {
     !(function (citem) {
       getArticleLink(citem).then(result => {
-        articleLinkArr.concat(result)
+        statisticsCount++
+        articleLinkArr = articleLinkArr.concat(result)
+        if (statisticsCount === totalNum) {
+          executePrintPlan(browser, articleLinkArr)
+        }
       })
     }(item))
   })
-  await page.waitFor(10000)
-  console.log(articleLinkArr)
+}
+
+let concurrencyCount = 0
+const printPageToPdf = async (browser, item, callback) => {
+  page = await browser.newPage()
+  concurrencyCount++
+  console.log(`现在的并发数是: ${concurrencyCount},正在打印的是：${item.href}`)
+  await page.goto($config.targetOrigin + item.href)
+  await page.waitFor(1000)
+  $util.executePrintToPdf(page)
+  await page.waitFor(1000)
+  concurrencyCount--
+  callback()
+}
+
+const executePrintPlan = async (browser, source) => {
+  mapLimit(source, 5, (item, callback) => {
+    printPageToPdf(browser, item, callback)
+  })
+
+  // browser.close()
 }

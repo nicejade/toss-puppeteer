@@ -82,6 +82,19 @@ $util.executeScreenshot = async(page) => {
   }
 }
 
+$util.executePrintToPdf = async(page) => {
+  if (await $util.isLoadingFinished(page)) {
+    let pageTitle = await page.title()
+    await page.pdf({path: `./dist/pdf/${pageTitle}.pdf`})
+    console.log(chalk.magenta(`已经将 ${pageTitle} 页面完成 PDF 打印`))
+    page.close()
+  } else {
+    setTimeout(() => {
+      $util.executePrintToPdf(page)
+    }, 100)
+  }
+}
+
 $util.onListenUrlChange = async(page, callback) => {
   let pageTitle = await page.title()
   if (!screenshotNameList.includes(pageTitle)) {

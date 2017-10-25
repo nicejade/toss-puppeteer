@@ -3,3 +3,4 @@ node_modules/
 npm-debug.log
 screenshot/
 src/config/secretConfig.js
+dist/pdf/
