@@ -33,3 +33,5 @@ npm run printWebsiteToPDF
 - [X] 打开 https://jeffjade.com/archives 页面，从而得到其分页总数；
 - [X] 运用 `axios` & `cheerio` 抓取页面并分析，从而得到网站所有文章链接，并存储；
 - [X] 遍历所有链接（借助 `async`），并将其打印成 PDF,在页面渲染完成之后。
+
+![使用 Puppeteer 抓取指定网站页面并将其打印成 PDF](https://raw.githubusercontent.com/nicejade/toss-puppeteer/master/screenshot/jeffjade-pdf.png)
