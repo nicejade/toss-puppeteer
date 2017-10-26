@@ -8,7 +8,7 @@ Try all kinds of toss about using GoogleChrome puppeteer
 ### 运行命令
 ```
 git clone https://github.com/nicejade/toss-puppeteer
-npm i (yarn)
+npm i (更推荐 yarn)
 npm run shareBlogToBlogread
 ```
 ### 步骤详述
@@ -25,13 +25,13 @@ npm run shareBlogToBlogread
 ### 运行命令
 ```
 git clone https://github.com/nicejade/toss-puppeteer
-npm i (yarn)
+npm i (更推荐 yarn)
 npm run printWebsiteToPDF
 ```
 
 ### 步骤详述
-- [X] 打开 https://jeffjade.com/archives 页面，从而得到其分页总数；
-- [X] 运用 `axios` & `cheerio` 抓取页面并分析，从而得到网站所有文章链接，并存储；
-- [X] 遍历所有链接（借助 `async`），并将其打印成 PDF,在页面渲染完成之后。
+- [X] 打开 https://jeffjade.com/archives 页面，从而得到博客文章总分页总数；
+- [X] 运用 `axios` & `cheerio` 抓取分页并分析，从而得到网站所有文章链接，并存储；
+- [X] 遍历所有链接（借助 `async` 控制并发），在页面渲染完成之后，将其打印成 PDF 并保存。
 
 ![使用 Puppeteer 抓取指定网站页面并将其打印成 PDF](https://raw.githubusercontent.com/nicejade/toss-puppeteer/master/screenshot/jeffjade-pdf.png)
