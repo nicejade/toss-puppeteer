@@ -83,11 +83,13 @@ const getContentYouWantShare = async(browser) => {
 }
 
 const executeSharePlan = async(browser, page) => {
-  let spinnerGetContent = ora('Start crawling content you want share...\n')
-  spinnerGetContent.start()
+  let getContentOra = ora('Start crawling content you want share...')
+  getContentOra.start()
   let shareContent = await getContentYouWantShare(browser)
-  spinnerGetContent.stop()
+  getContentOra.stop()
 
+  let jump2WeiboOra = ora(`(need login with weibo)Okay, Let's jump to there...`)
+  jump2WeiboOra.start()
   await page.evaluate(async() => {
     let navbarList = [...document.querySelectorAll('.panel-body a')]
     navbarList.forEach(item => {
@@ -96,8 +98,8 @@ const executeSharePlan = async(browser, page) => {
       }
     })
   })
-
   await $util.waitForTimeout($config.pageCommonWaitTime)
+  jump2WeiboOra.stop()
 
   // -----------微博登录---------;
   await $util.launchLogin(page)
