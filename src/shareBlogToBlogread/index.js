@@ -1,19 +1,22 @@
 const puppeteer = require('puppeteer')
 const chalk = require('chalk')
+const ora = require('ora')
 
 const $util = require('./../helper/util.js')
 const $config = require('./config.js')
 
+env.NODE_ENV = process.env.NODE_ENV || 'production'
+
 $util.setConfig($config)
 
-puppeteer.launch({ headless: false }).then(async browser => {
+puppeteer.launch({ headless: true }).then(async browser => {
   let page = await browser.newPage()
   page.setViewport({ width: 1024, height: 2048 })
 
   page
     .waitForSelector('img')
     .then(async() => {
-      if ($util.isNeedLogin) {
+      if ($config.isNeedLogin) {
         if (await $util.isLogin(page)) {} else {
           $util.launchLogin(page).then(() => {
             executeSharePlan(browser, page)
@@ -80,7 +83,10 @@ const getContentYouWantShare = async(browser) => {
 }
 
 const executeSharePlan = async(browser, page) => {
+  let spinnerGetContent = ora('Start crawling content you want share...\n')
+  spinnerGetContent.start()
   let shareContent = await getContentYouWantShare(browser)
+  spinnerGetContent.stop()
 
   await page.evaluate(async() => {
     let navbarList = [...document.querySelectorAll('.panel-body a')]
