@@ -5,7 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "shareBlogToBlogread": "node src/shareBlogToBlogread/index.js",
-    "printWebsiteToPDF": "node src/printWebsiteToPDF/index.js"
+    "printWebsiteToPDF": "node src/printWebsiteToPDF/index.js",
+    "initializeGitment": "node src/initializeGitment/index.js"
   },
   "repository": {
     "type": "git",
