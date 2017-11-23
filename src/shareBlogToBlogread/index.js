@@ -13,6 +13,8 @@ puppeteer.launch({ headless: true }).then(async browser => {
   let page = await browser.newPage()
   page.setViewport({ width: 1024, height: 2048 })
 
+  $util.setPageWatcher(page)
+
   page
     .waitForSelector('img')
     .then(async() => {
@@ -26,22 +28,6 @@ puppeteer.launch({ headless: true }).then(async browser => {
         executeSharePlan(browser, page)
       }
     })
-
-  page.on('requestfinished', result => {
-    if (result.url.includes('clustrmaps.com')) {
-      $util.onListenUrlChange(page)
-    }
-  })
-
-  page.on('error', (error) => {
-    console.log(chalk.red('whoops! there was an error'))
-    console.log(error)
-  })
-
-  page.on('pageerror', (error) => {
-    console.log(chalk.red('whoops! there was an pageerror'))
-    console.log(error)
-  })
 
   await page.goto($config.shareTargetPath)
 })
@@ -78,7 +64,7 @@ const getContentYouWantShare = async(browser) => {
   let needShareContent = await $util.getWebPageInfo(currentUrl)
   needShareContent.url = currentUrl
 
-  // page.close()
+  setTimeout(() => { page.close() }, 100)
   return needShareContent
 }
 
@@ -101,26 +87,24 @@ const executeSharePlan = async(browser, page) => {
   await $util.waitForTimeout($config.pageCommonWaitTime)
   jump2WeiboOra.stop()
 
-  // -----------微博登录---------;
+  // -----------微博登录---------Start;
+  let weiboLoginOra = ora('Start logging in sina-weobo ...')
+  weiboLoginOra.start()
   await $util.launchLogin(page)
-
+  weiboLoginOra.stop()
+  
   await $util.waitForTimeout($config.requestLoginWaitTime)
 
-  let titleInput = await page.$('[name=title]')
-  await titleInput.click()
-  await page.type(shareContent.title, { delay: 20 })
-
-  let urlInput = await page.$('[name=url]')
-  await urlInput.click()
-  await page.type(shareContent.url, { delay: 20 })
-
-  let summaryInput = await page.$('[name=summary]')
-  await summaryInput.click()
-  await page.type(shareContent.desc, { delay: 20 })
+  let startShare = ora('Start logging in sina-weobo ...')
+  await page.type('[name=title]', shareContent.title, { delay: 20 })
+  await page.type('[name=url]', shareContent.url, { delay: 20 })
+  await page.type('[name=summary]', shareContent.desc, { delay: 20 })
 
   let sublimtBtn = await page.$('[type=submit]')
   await sublimtBtn.click()
 
-  console.log(chalk.green('So nice, Has been automatically help you to complete the sharing. The content is as follows: '))
+  $util.printWithColor('So nice, Has been automatically help you to complete the sharing. The content is as follows: ', 'success')
   console.log(shareContent)
+  await page.close()
+  await browser.close()
 }

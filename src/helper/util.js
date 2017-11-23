@@ -46,18 +46,36 @@ $util.isLogin = (page) => {
 }
 
 $util.launchLogin = async(page) => {
-  let loginUserInput = await page.$('#userId')
-  await loginUserInput.click()
-  await page.type(secretConfig.weibo.account, { delay: 20 })
+  await page.type('#userId', secretConfig.weibo.account, { delay: 20 })
 
-  let loginPwdInput = await page.$('#passwd')
-  await loginPwdInput.click()
-  await page.type(secretConfig.weibo.password, { delay: 20 })
+  await page.type('#passwd', secretConfig.weibo.password, { delay: 20 })
 
   let loginBtn = await page.$('.WB_btn_login')
   await loginBtn.click({delay: 20})
 
   await page.waitFor(600)
+}
+
+$util.setPageWatcher = (page) => {
+  page.on('requestfinished', result => {
+    if (result.url.includes('www.google-analytics.com')) {
+      $util.onListenUrlChange(page)
+    }
+  })
+
+  page.on('requestfailed', error => {
+    console.log(chalk.red(`whoops! request failed： ${result.url}`))
+  })
+
+  page.on('error', (error) => {
+    console.log(chalk.red('whoops! there was an error'))
+    console.log(error)
+  })
+
+  page.on('pageerror', (error) => {
+    console.log(chalk.red('whoops! there was an pageerror'))
+    console.log(error)
+  })
 }
 
 $util.getCurrentFullPath = (page) => {
