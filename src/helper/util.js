@@ -45,9 +45,8 @@ $util.isLogin = (page) => {
   })
 }
 
-$util.launchLogin = async(page) => {
+$util.launchWeiboLogin = async(page) => {
   await page.type('#userId', secretConfig.weibo.account, { delay: 20 })
-
   await page.type('#passwd', secretConfig.weibo.password, { delay: 20 })
 
   let loginBtn = await page.$('.WB_btn_login')
@@ -56,13 +55,22 @@ $util.launchLogin = async(page) => {
   await page.waitFor(600)
 }
 
-$util.setPageWatcher = (page) => {
-  page.on('requestfinished', result => {
-    if (result.url.includes('www.google-analytics.com')) {
-      $util.onListenUrlChange(page)
-    }
-  })
+$util.launchGithubLogin = async(page) => {
+  try {
+    await page.type('#login_field', secretConfig.github.account, { delay: 20 })
+    await page.type('#password', secretConfig.github.password, { delay: 20 })
+  
+    let loginBtn = await page.$('[name=commit]')
+    await loginBtn.click({delay: 20})
+  
+    await page.waitFor(600)
+    return Promise.resolve(1)
+  } catch (error) {
+    return Promise.resolve(0)
+  }
+}
 
+$util.setPageWatcher = (page) => {
   page.on('requestfailed', error => {
     console.log(chalk.red(`whoops! request failed： ${result.url}`))
   })

@@ -2,6 +2,7 @@ const puppeteer = require('puppeteer')
 const cheerio = require('cheerio')
 const axios = require('axios')
 const chalk = require('chalk')
+const ora = require('ora')
 const mapLimit = require('async/mapLimit')
 
 const $util = require('./../helper/util.js')
@@ -18,27 +19,13 @@ puppeteer.launch({ headless: true }).then(async browser => {
   let page = await browser.newPage()
   page.setViewport({ width: 1024, height: 2048 })
 
+  $util.setPageWatcher(page)
+
   page
     .waitForSelector('img')
     .then(async() => {
       executeCrawlPlan(browser, page)
     })
-
-  page.on('requestfinished', result => {
-    if (result.url.includes('clustrmaps.com')) {
-      $util.onListenUrlChange(page)
-    }
-  })
-
-  page.on('error', (error) => {
-    console.log(chalk.red('whoops! there was an error'))
-    console.log(error)
-  })
-
-  page.on('pageerror', (error) => {
-    console.log(chalk.red('whoops! there was an pageerror'))
-    console.log(error)
-  })
 
   await page.goto($config.targetWebsite)
 })
@@ -93,29 +80,69 @@ const executeCrawlPlan = async (browser, page) => {
         statisticsCount++
         articleLinkArr = articleLinkArr.concat(result)
         if (statisticsCount === totalNum) {
-          executePrintPlan(browser, articleLinkArr)
+          startExecutePlan(browser, articleLinkArr)
         }
       })
     }(item))
   })
 }
 
+const findAndTriggerInitBtn = async (page) => {
+  await page.waitFor(3000)
+  let currentPagePaht = await $util.getCurrentFullPath(page) 
+
+  let pageGithubLoginBtn = await page.$('.gitment-editor-login-link')
+  if (pageGithubLoginBtn) {
+    await pageGithubLoginBtn.click({delay: 20})
+  }
+  await page.waitFor(2000)
+
+  $util.printWithColor(`The ongoing initialization is：${currentPagePaht}`, '')
+  let initGitmentBtn = await page.$('.gitment-comments-init-btn')
+  if (initGitmentBtn) {
+    await initGitmentBtn.click({delay: 20})
+    $util.printWithColor(`✔ Complete initialization for ${currentPagePaht}`, 'success')
+  } else {
+    $util.printWithColor(`⍻ Did not find the initialization button about ${currentPagePaht}`, 'warning')
+  }
+  setTimeout(() => { page.close() }, 100)
+}
+
 let concurrentCount = 0
 const executeInitializePlan = async (browser, item, callback) => {
-  page = await browser.newPage()
+  let cpage = await browser.newPage()
   concurrentCount++
-  $util.printWithColor(`Now the number of concurrent is: ${concurrentCount}, What is printing is:：${item.href}`, 'success')
-  await page.goto($config.targetOrigin + item.href)
-  await page.waitFor(1000)
-  // ---
+  $util.printWithColor(`Now the number of concurrent is: ${concurrentCount}, Trying for :：${item.href}`, '')
+  await cpage.goto($config.targetOrigin + item.href)
+  cpage.on('requestfinished', result => {
+    if (result.url.includes('gitment.browser.js')) {
+      console.log('ddfasdfasa')
+      // findAndTriggerInitBtn(cpage)
+    }
+  })
+  findAndTriggerInitBtn(cpage)
+  await cpage.waitFor(5000)
   concurrentCount--
   callback()
 }
 
-const executePrintPlan = async (browser, source) => {
-  $util.printWithColor(`Okay, Start the print operation.`, 'success')
-  mapLimit(source, 5, (item, callback) => {
+const startExecutePlan = async (browser, source) => {
+  $util.printWithColor(`✔ Okay, Let me start implementing the nice plan.`, 'success')
+
+  // --------------------Login With Github----------------------
+  let githubLoginOra = ora('Start logging in github ...')
+  githubLoginOra.start()
+  let page = await browser.newPage()
+  await page.goto('https://github.com/login')
+  await $util.launchGithubLogin(page)
+  githubLoginOra.stop()
+  $util.printWithColor(`✔ Okay, Already done for you about github auto login.`, 'success')
+ 
+  let initGitmentOra = ora('Attempting to initialize gitment for all crawled pages ...')
+  initGitmentOra.start()
+  mapLimit(source, 3, (item, callback) => {
     executeInitializePlan(browser, item, callback)
   })
+  initGitmentOra.stop() 
   // browser.close()
 }

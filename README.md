@@ -31,7 +31,32 @@ npm run printWebsiteToPDF
 
 ### 步骤详述
 - [X] 打开 https://jeffjade.com/archives 页面，从而得到博客文章总分页总数；
-- [X] 运用 `axios` & `cheerio` 抓取分页并分析，从而得到网站所有文章链接，并存储；
+- [X] 运用 `axios` & `cheerio` 抓取分页并分析，从而得到网站所有文章链接，并存储在数据中；
 - [X] 遍历所有链接（借助 `async` 控制并发），在页面渲染完成之后，将其打印成 PDF 并保存。
 
 ![使用 Puppeteer 抓取指定网站页面并将其打印成 PDF](https://raw.githubusercontent.com/nicejade/toss-puppeteer/master/screenshot/jeffjade-pdf.png)
+
+## 一键初始化 `Gitment` 评论系统
+- **背景：** 
+
+早前在 [About Me](https://jeffjade.com/About/)有如此感叹道：>嗟夫，真真是：独立的才是自己的。博客从最开始用**多说**，17年6月1日关闭服务后，转战**网易云跟帖**；未曾想它8月1日也跟着关闭了。索性转投靠至国外**Disqus**，奈何这堵墙厉害之极，家里虽也翻了墙，却仍不能很好访问；这才又转战至 **Gitment**；😂言多皆泪，感慨颇多啊——独立的才是自己的，之后得空时候，还是自己搞一套😪，Fighting。
+
+这提及的 [Gitment](https://github.com/imsun/gitment) 是基于 GitHub Issues 的评论系统；它本身的一些特征，使得它存在很多优势，对于维护“程序”相关话题博客。所以，个人博客[晚晴幽草轩](https://jeffjade.com)就采用此评论系统；但，它也会存在一些问题，譬如需要主动初始化评论,[initialize-your-comments](https://github.com/imsun/gitment#4-initialize-your-comments)，当然也可以运用些工具协助完成✅。对于已经写了 140+ 篇博文的[晚晴幽草轩](https://jeffjade.com)，这实在很有必要；所以，这里谈及即，使用 `Puppeteer` 一键来初始化 `Gitment` 评论系统（需要注明的是，每个系统结构有所区别，这里只具有些参考性，却不能直接加以使用）。
+
+### 运行命令
+```
+git clone https://github.com/nicejade/toss-puppeteer
+npm i (更推荐 yarn)
+npm run initializeGitment
+```
+
+### 步骤详述
+- [X] 打开 https://jeffjade.com/archives 页面，从而得到博客文章总分页总数；
+- [X] 运用 `axios` & `cheerio` 抓取分页并分析，从而得到网站所有文章链接，并存储在数据中；
+- [X] 打开 Github 登录地址： https://github.com/login ，填充用户名、密码，从而完成登录；
+- [X] 遍历所存储链接，并在不同窗口打开（借助 `async` 控制并发）；
+- [X] 在等待 3~5S 后，寻址到初始化按钮，并点击（实际上需要先触发博客页面的 Github login 链接）；
+
+[一键初始化 Gitment 评论系统](https://raw.githubusercontent.com/nicejade/toss-puppeteer/master/screenshot/gitment01.png)
+
+[一键初始化 Gitment 评论系统](https://raw.githubusercontent.com/nicejade/toss-puppeteer/master/screenshot/gitment02.png)

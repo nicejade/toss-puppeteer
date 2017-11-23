@@ -104,7 +104,7 @@ let concurrentCount = 0
 const printPageToPdf = async (browser, item, callback) => {
   page = await browser.newPage()
   concurrentCount++
-  $util.printWithColor(`Now the number of concurrent is: ${concurrentCount}, What is printing is:：${item.href}`, 'success')
+  $util.printWithColor(`Now the number of concurrent is: ${concurrentCount}, What is being printed now is:：${item.href}`, 'success')
   await page.goto($config.targetOrigin + item.href)
   await page.waitFor(1000)
   $util.executePrintToPdf(page)

@@ -14,13 +14,18 @@ puppeteer.launch({ headless: true }).then(async browser => {
   page.setViewport({ width: 1024, height: 2048 })
 
   $util.setPageWatcher(page)
+  page.on('requestfinished', result => {
+    if (result.url.includes('www.google-analytics.com')) {
+      $util.onListenUrlChange(page)
+    }
+  })
 
   page
     .waitForSelector('img')
     .then(async() => {
       if ($config.isNeedLogin) {
         if (await $util.isLogin(page)) {} else {
-          $util.launchLogin(page).then(() => {
+          $util.launchWeiboLogin(page).then(() => {
             executeSharePlan(browser, page)
           })
         }
@@ -90,7 +95,7 @@ const executeSharePlan = async(browser, page) => {
   // -----------微博登录---------Start;
   let weiboLoginOra = ora('Start logging in sina-weobo ...')
   weiboLoginOra.start()
-  await $util.launchLogin(page)
+  await $util.launchWeiboLogin(page)
   weiboLoginOra.stop()
   
   await $util.waitForTimeout($config.requestLoginWaitTime)
