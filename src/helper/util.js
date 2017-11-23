@@ -72,7 +72,7 @@ $util.launchGithubLogin = async(page) => {
 
 $util.setPageWatcher = (page) => {
   page.on('requestfailed', error => {
-    console.log(chalk.red(`whoops! request failed： ${result.url}`))
+    console.log(chalk.red(`whoops! request failed： ${error.url}`))
   })
 
   page.on('error', (error) => {

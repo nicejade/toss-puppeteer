@@ -91,9 +91,9 @@ const findAndTriggerInitBtn = async (page) => {
   await page.waitFor(3000)
   let currentPagePaht = await $util.getCurrentFullPath(page) 
 
-  let pageGithubLoginBtn = await page.$('.gitment-editor-login-link')
-  if (pageGithubLoginBtn) {
-    await pageGithubLoginBtn.click({delay: 20})
+  let gitmentLeditorLoginLink = await page.$('.gitment-editor-login-link')
+  if (gitmentLeditorLoginLink) {
+    await gitmentLeditorLoginLink.click({delay: 20})
   }
   await page.waitFor(2000)
 
@@ -103,7 +103,7 @@ const findAndTriggerInitBtn = async (page) => {
     await initGitmentBtn.click({delay: 20})
     $util.printWithColor(`✔ Complete initialization for ${currentPagePaht}`, 'success')
   } else {
-    $util.printWithColor(`⍻ Did not find the initialization button about ${currentPagePaht}`, 'warning')
+    $util.printWithColor(`⍻ Did not find the initialization button at ${currentPagePaht}`, 'warning')
   }
   setTimeout(() => { page.close() }, 100)
 }
@@ -114,12 +114,14 @@ const executeInitializePlan = async (browser, item, callback) => {
   concurrentCount++
   $util.printWithColor(`Now the number of concurrent is: ${concurrentCount}, Trying for :：${item.href}`, '')
   await cpage.goto($config.targetOrigin + item.href)
+
+  $util.setPageWatcher(cpage)
   cpage.on('requestfinished', result => {
     if (result.url.includes('gitment.browser.js')) {
-      console.log('ddfasdfasa')
-      // findAndTriggerInitBtn(cpage)
+      console.log('- Already loaded gitment.browser.js')
     }
   })
+
   findAndTriggerInitBtn(cpage)
   await cpage.waitFor(5000)
   concurrentCount--
@@ -140,9 +142,8 @@ const startExecutePlan = async (browser, source) => {
  
   let initGitmentOra = ora('Attempting to initialize gitment for all crawled pages ...')
   initGitmentOra.start()
-  mapLimit(source, 3, (item, callback) => {
+  mapLimit(source, 4, (item, callback) => {
     executeInitializePlan(browser, item, callback)
   })
   initGitmentOra.stop() 
-  // browser.close()
 }
