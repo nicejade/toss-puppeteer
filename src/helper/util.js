@@ -57,6 +57,8 @@ $util.launchWeiboLogin = async(page) => {
 
 $util.launchGithubLogin = async(page) => {
   try {
+    await page.goto('https://github.com/login')
+
     await page.type('#login_field', secretConfig.github.account, { delay: 20 })
     await page.type('#password', secretConfig.github.password, { delay: 20 })
   
@@ -157,6 +159,12 @@ $util.waitForTimeout = (delay) => {
         reject(false)
       }
     }, delay)
+  })
+}
+
+$util.waitForReadyStateComplete = (page) => {
+  return new Promise((resolve, reject) => {
+    $util.isLoadingFinished(page)
   })
 }
 

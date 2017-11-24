@@ -36,13 +36,13 @@ const getArticleLink = (url) => {
       try {
         let $ = cheerio.load(res.data)
         let aHrefList = []
-        $util.printWithColor(`The article has been crawled as follows：`, 'success')
+        $util.printWithColor(`✔ The article has been crawled as follows：`, 'success')
         $('#archive-page .post a').each(function (i, e) {
           let item = {
             href: $(e).attr('href'),
             title: $(e).attr('title')
           }
-          $util.printWithColor(`${item.title}: ${item.href}`)
+          $util.printWithColor(`  ${item.title}: ${item.href}`)
           aHrefList.push(item)
         })
         return resolve(aHrefList)
@@ -88,31 +88,35 @@ const executeCrawlPlan = async (browser, page) => {
 }
 
 const findAndTriggerInitBtn = async (page) => {
-  await page.waitFor(3000)
-  let currentPagePaht = await $util.getCurrentFullPath(page) 
+  let currentPagePath = await $util.getCurrentFullPath(page)
 
-  let gitmentLeditorLoginLink = await page.$('.gitment-editor-login-link')
-  if (gitmentLeditorLoginLink) {
-    await gitmentLeditorLoginLink.click({delay: 20})
+  try {
+    let gitmentLeditorLoginLink = await page.$('.gitment-editor-login-link')
+    if (gitmentLeditorLoginLink) {
+      $util.printWithColor(`✔ Have found Gitment Editor Login Link In: ${currentPagePath}`, '')
+      await gitmentLeditorLoginLink.click({delay: 20})
+    }
+  } catch (error) {
+    $util.printWithColor(` The Error Is: ${error}`, '')
   }
-  await page.waitFor(2000)
-
-  $util.printWithColor(`The ongoing initialization is：${currentPagePaht}`, '')
-  let initGitmentBtn = await page.$('.gitment-comments-init-btn')
-  if (initGitmentBtn) {
+  page.waitForSelector('.gitment-comments-init-btn').then(async () => {
+    console.log('here 003-----------')
+    $util.printWithColor(`The ongoing initialization is：${currentPagePath}`, '')
+    let initGitmentBtn = await page.$('.gitment-comments-init-btn')
     await initGitmentBtn.click({delay: 20})
-    $util.printWithColor(`✔ Complete initialization for ${currentPagePaht}`, 'success')
-  } else {
-    $util.printWithColor(`⍻ Did not find the initialization button at ${currentPagePaht}`, 'warning')
-  }
-  setTimeout(() => { page.close() }, 100)
+    $util.printWithColor(`✔ Complete initialization for ${currentPagePath}`, 'success')
+    setTimeout(() => { page.close() }, 2000)  
+  }).catch(error => {
+    $util.printWithColor(`⍻ Did not find the initialization button at ${currentPagePath}`, 'warning')
+    $util.printWithColor(` The Error Is: ${error}`, '')
+  })
 }
 
 let concurrentCount = 0
 const executeInitializePlan = async (browser, item, callback) => {
   let cpage = await browser.newPage()
   concurrentCount++
-  $util.printWithColor(`Now the number of concurrent is: ${concurrentCount}, Trying for :：${item.href}`, '')
+  $util.printWithColor(`Now the number of concurrent is: ${concurrentCount}, Trying for: ${item.href}`, '')
   await cpage.goto($config.targetOrigin + item.href)
 
   $util.setPageWatcher(cpage)
@@ -121,11 +125,11 @@ const executeInitializePlan = async (browser, item, callback) => {
       console.log('- Already loaded gitment.browser.js')
     }
   })
-
-  findAndTriggerInitBtn(cpage)
-  await cpage.waitFor(5000)
-  concurrentCount--
-  callback()
+  cpage.waitForSelector('.gitment-editor-login-link').then(() => {
+    findAndTriggerInitBtn(cpage)
+    concurrentCount--
+    callback()
+  })
 }
 
 const startExecutePlan = async (browser, source) => {
@@ -135,7 +139,6 @@ const startExecutePlan = async (browser, source) => {
   let githubLoginOra = ora('Start logging in github ...')
   githubLoginOra.start()
   let page = await browser.newPage()
-  await page.goto('https://github.com/login')
   await $util.launchGithubLogin(page)
   githubLoginOra.stop()
   $util.printWithColor(`✔ Okay, Already done for you about github auto login.`, 'success')
