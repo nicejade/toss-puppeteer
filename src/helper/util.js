@@ -61,10 +61,10 @@ $util.launchGithubLogin = async(page) => {
 
     await page.type('#login_field', secretConfig.github.account, { delay: 20 })
     await page.type('#password', secretConfig.github.password, { delay: 20 })
-  
+
     let loginBtn = await page.$('[name=commit]')
     await loginBtn.click({delay: 20})
-  
+
     await page.waitFor(600)
     return Promise.resolve(1)
   } catch (error) {
@@ -163,8 +163,18 @@ $util.waitForTimeout = (delay) => {
 }
 
 $util.waitForReadyStateComplete = (page) => {
-  return new Promise((resolve, reject) => {
-    $util.isLoadingFinished(page)
+  return new Promise(async (resolve, reject) => {
+    let timeLimit = 30000
+    let cycleFactor = 100
+    let i = 0
+    while (i < timeLimit) {
+      if (await $util.isLoadingFinished(page)) {
+        return resolve(true)
+      }
+      i += cycleFactor
+    }
+    $util.printWithColor('✘ Error: Timeout Exceeded: 30000ms exceeded', 'warning')
+    return resolve(false)
   })
 }
 

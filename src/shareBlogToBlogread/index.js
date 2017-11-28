@@ -97,7 +97,7 @@ const executeSharePlan = async(browser, page) => {
   weiboLoginOra.start()
   await $util.launchWeiboLogin(page)
   weiboLoginOra.stop()
-  
+
   await $util.waitForTimeout($config.requestLoginWaitTime)
 
   let startShare = ora('Start logging in sina-weobo ...')

@@ -38,7 +38,7 @@ npm run printWebsiteToPDF
 
 ## 一键初始化 `Gitment` 评论系统
 
-### **背景说明** 
+### **背景说明** 、
 
 早前在 [About Me](https://jeffjade.com/About/)有如此感叹道：
 >嗟夫，真真是：独立的才是自己的。博客从最开始用**多说**，17年6月1日关闭服务后，转战**网易云跟帖**；未曾想它8月1日也跟着关闭了。索性转投靠至国外**Disqus**，奈何这堵墙厉害之极，家里虽也翻了墙，却仍不能很好访问；这才又转战至 **Gitment**；😂言多皆泪，感慨颇多啊——独立的才是自己的，之后得空时候，还是自己搞一套😪，Fighting。
@@ -61,6 +61,25 @@ npm run initializeGitment
 
 ![一键初始化 Gitment 评论系统](https://raw.githubusercontent.com/nicejade/toss-puppeteer/master/screenshot/gitment01.png)
 
-![一键初始化 Gitment 评论系统](https://raw.githubusercontent.com/nicejade/toss-puppeteer/master/screenshot/gitment02.png)
-
 寄存的博客评论，可在 [jadeblog-backups#issues](https://github.com/nicejade/jadeblog-backups/issues) 查看;(实际上，在使用 `Gitment` 之时，触发初始化按钮，并未能真正完成初始化，猜测这可能是插件本身的问题，或者别的，需要进一步探究）(Update@17-11-23)。
+
+## 用 `Puppeteer Trace` 做性能分析
+
+可以使用 `tracing.start` 和 `tracing.stop` 创建一个可以在 Chrome 开发工具或时间线查看器中打开的跟踪文件(每个浏览器一次只能激活一个跟踪)，具体参见 [Puppeteer Trace Api](https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#class-tracing)。
+
+```
+await page.tracing.start({path: 'trace.json'})
+await page.goto('https://www.google.com')
+await page.tracing.stop()
+```
+
+### 运行命令
+```
+git clone https://github.com/nicejade/toss-puppeteer
+npm i (更推荐 yarn)
+npm run performanceAnalysis
+```
+
+![一键初始化 Gitment 评论系统](https://raw.githubusercontent.com/nicejade/toss-puppeteer/master/screenshot/blog-lovejade-cn-trace.jpg)
+
+对于 Chrome Performance／Timeline，如何使用，可以参见 [Chrome 开发者工具](https://developers.google.com/web/tools/chrome-devtools/?hl=zh-cn)，或者移步至 [Chrome Tutorial](https://github.com/nicejade/nice-front-end-tutorial/blob/master/tutorial/chrome-tutorial.md)，这里有比较详尽的，不断补充修缮的参考资料。
