@@ -6,7 +6,7 @@ rm('-rf', cSaveTracePath)
 mkdir('-p', cSaveTracePath)
 
 module.exports = {
-  targetWebsite: 'https://blog.lovejade.cn',
-  targetOrigin: 'https://blog.lovejade.cn',
+  targetWebsite: 'https://nicelinks.site/explore/skill',
+  targetOrigin: 'https://nicelinks.site/explore/skill',
   saveTracePath: cSaveTracePath
 }

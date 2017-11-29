@@ -4,3 +4,4 @@ npm-debug.log
 src/config/secretConfig.js
 dist/pdf/
 dist/screenshot/
+dist/trace/

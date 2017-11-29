@@ -6,14 +6,9 @@ const $config = require('./config.js')
 
 $util.setConfig($config)
 
-/*
-  headless: true 注意产生PDF格式目前仅支持Chrome无头版。 (update@2017-10-25)
-  NOTE Generating a pdf is currently only supported in Chrome headless.
-  https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#pagepdfoptions
- */
-puppeteer.launch({ headless: true }).then(async browser => {
+puppeteer.launch({ headless: false }).then(async browser => {
   let page = await browser.newPage()
-  page.setViewport({ width: 1024, height: 2048 })
+  page.setViewport({ width: 961, height: 526 })
 
   page
     .waitForSelector('img')
@@ -29,6 +24,9 @@ puppeteer.launch({ headless: true }).then(async browser => {
     if (result) {
       $util.printWithColor('✔ Okay，The page has been loaded, and saved trace.json', 'success')
       await page.tracing.stop()
+      await page.waitFor(1000)
+      let pageTitle = await page.title()
+      await page.screenshot({ path: `${$config.saveTracePath}${pageTitle}.png`, type: 'png' })
       await browser.close()
     }
   })
