@@ -108,13 +108,14 @@ const findAndTriggerInitBtn = async (page) => {
 }
 
 let concurrentCount = 0
-const executeInitializePlan = async (browser, item, callback) => {
+const executeInitializePlan = async (browser, item) => {
   let cpage = await browser.newPage()
   concurrentCount++
   $util.printWithColor(`Now the number of concurrent is: ${concurrentCount}, Trying for: ${item.href}`, '')
   await cpage.goto($config.targetOrigin + item.href)
 
   $util.setPageWatcher(cpage)
+
   cpage.on('requestfinished', result => {
     if (result.url.includes('gitment.browser.js')) {
       console.log('- Already loaded gitment.browser.js')
@@ -123,7 +124,6 @@ const executeInitializePlan = async (browser, item, callback) => {
   cpage.waitForSelector('.gitment-editor-login-link').then(() => {
     findAndTriggerInitBtn(cpage)
     concurrentCount--
-    callback()
   })
 }
 
@@ -143,7 +143,11 @@ const startExecutePlan = async (browser, source) => {
   initGitmentOra.start()
   mapLimit(source, 3, async (item) => {
     await page.waitFor(1000)
-    executeInitializePlan(browser, item, callback)
+    executeInitializePlan(browser, item)
+  }, (error) => {
+    if (error) {
+      $util.printWithColor(`Opps, Something error: ${error}`, 'error')
+    }
   })
   initGitmentOra.stop()
 }
