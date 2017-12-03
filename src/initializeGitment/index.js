@@ -10,11 +10,6 @@ const $config = require('./config.js')
 
 $util.setConfig($config)
 
-/*
-  headless: true 注意产生PDF格式目前仅支持Chrome无头版。 (update@2017-10-25)
-  NOTE Generating a pdf is currently only supported in Chrome headless.
-  https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#pagepdfoptions
- */
 puppeteer.launch({ headless: true }).then(async browser => {
   let page = await browser.newPage()
   page.setViewport({ width: 1024, height: 2048 })
@@ -99,13 +94,13 @@ const findAndTriggerInitBtn = async (page) => {
   } catch (error) {
     $util.printWithColor(` The Error Is: ${error}`, '')
   }
+
   page.waitForSelector('.gitment-comments-init-btn').then(async () => {
-    console.log('here 003-----------')
     $util.printWithColor(`The ongoing initialization is：${currentPagePath}`, '')
     let initGitmentBtn = await page.$('.gitment-comments-init-btn')
     await initGitmentBtn.click({delay: 20})
     $util.printWithColor(`✔ Complete initialization for ${currentPagePath}`, 'success')
-    setTimeout(() => { page.close() }, 2000)  
+    setTimeout(() => { page.close() }, 2000)
   }).catch(error => {
     $util.printWithColor(`⍻ Did not find the initialization button at ${currentPagePath}`, 'warning')
     $util.printWithColor(` The Error Is: ${error}`, '')
@@ -135,18 +130,20 @@ const executeInitializePlan = async (browser, item, callback) => {
 const startExecutePlan = async (browser, source) => {
   $util.printWithColor(`✔ Okay, Let me start implementing the nice plan.`, 'success')
 
-  // --------------------Login With Github----------------------
+  // --------------------Login With Github----------------------Start
   let githubLoginOra = ora('Start logging in github ...')
   githubLoginOra.start()
   let page = await browser.newPage()
   await $util.launchGithubLogin(page)
   githubLoginOra.stop()
   $util.printWithColor(`✔ Okay, Already done for you about github auto login.`, 'success')
- 
+  // --------------------Login With Github----------------------End
+
   let initGitmentOra = ora('Attempting to initialize gitment for all crawled pages ...')
   initGitmentOra.start()
-  mapLimit(source, 4, (item, callback) => {
+  mapLimit(source, 3, async (item) => {
+    await page.waitFor(1000)
     executeInitializePlan(browser, item, callback)
   })
-  initGitmentOra.stop() 
+  initGitmentOra.stop()
 }

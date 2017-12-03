@@ -14,6 +14,7 @@ puppeteer.launch({ headless: true }).then(async browser => {
   page.setViewport({ width: 1024, height: 2048 })
 
   $util.setPageWatcher(page)
+
   page.on('requestfinished', result => {
     if (result.url.includes('www.google-analytics.com')) {
       $util.onListenUrlChange(page)
@@ -61,7 +62,6 @@ const getContentYouWantShare = async(browser) => {
   })
 
   await $util.waitForTimeout($config.pageCommonWaitTime)
-  // await $util.waitForLoadComplete(page)
 
   $util.executeScreenshot(page)
 
@@ -97,7 +97,7 @@ const executeSharePlan = async(browser, page) => {
   weiboLoginOra.start()
   await $util.launchWeiboLogin(page)
   weiboLoginOra.stop()
-  
+
   await $util.waitForTimeout($config.requestLoginWaitTime)
 
   let startShare = ora('Start logging in sina-weobo ...')
