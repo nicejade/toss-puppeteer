@@ -61,10 +61,10 @@ $util.launchGithubLogin = async(page) => {
 
     await page.type('#login_field', secretConfig.github.account, { delay: 20 })
     await page.type('#password', secretConfig.github.password, { delay: 20 })
-  
+
     let loginBtn = await page.$('[name=commit]')
     await loginBtn.click({delay: 20})
-  
+
     await page.waitFor(600)
     return Promise.resolve(1)
   } catch (error) {
@@ -162,9 +162,28 @@ $util.waitForTimeout = (delay) => {
   })
 }
 
-$util.waitForReadyStateComplete = (page) => {
-  return new Promise((resolve, reject) => {
-    $util.isLoadingFinished(page)
+/**
+ * @Author   nicejade
+ * @DateTime 2017-11-28
+ * @param    {[type]}   page        [Browser 实例 Page]
+ * @param    {Number}   timesLimit  [等待页面加载完的成轮询次数，默认 600]
+ * @param    {Number}   cycleFactor [每次轮询的间隔时间(ms)，默认 10]
+ * @return   {Boolean}              [等待(timesLimit*cycleFactor)ms后，页面是否加载完毕]
+ */
+$util.waitForReadyStateComplete = (page, timesLimit = 600, cycleFactor = 10) => {
+  return new Promise(async (resolve, reject) => {
+    let i = 0
+    while (i < timesLimit) {
+      $util.printWithColor(`♻️  Wait for page load completion，Now the number of polling is: ${i}`, '')
+      if (await $util.isLoadingFinished(page)) {
+        $util.printWithColor(`😊  Okay, The time to wait for the page to load to complete is: ${i * cycleFactor} ms`, 'success')
+        return resolve(true)
+      }
+      i++
+      await page.waitFor(cycleFactor)
+    }
+    $util.printWithColor('✘ Error: Timeout Exceeded: 30000ms exceeded', 'warning')
+    return resolve(false)
   })
 }
 
