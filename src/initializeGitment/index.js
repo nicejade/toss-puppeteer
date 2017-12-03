@@ -124,6 +124,10 @@ const executeInitializePlan = async (browser, item) => {
   cpage.waitForSelector('.gitment-editor-login-link').then(() => {
     findAndTriggerInitBtn(cpage)
     concurrentCount--
+  }).catch(error => {
+    if (error) {
+      $util.printWithColor(`Opps, Something error(waitForSelector): ${error}`, 'error')
+    }
   })
 }
 
