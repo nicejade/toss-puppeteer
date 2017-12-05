@@ -17,7 +17,7 @@ module.exports = {
   }
 }
 */
-let secretConfig = require('./../config/secretConfig')
+let secretConfig = require('./../config/secret')
 
 let $util = {},
   $config = null,
@@ -45,14 +45,25 @@ $util.isLogin = (page) => {
   })
 }
 
-$util.launchWeiboLogin = async(page) => {
-  await page.type('#userId', secretConfig.weibo.account, { delay: 20 })
-  await page.type('#passwd', secretConfig.weibo.password, { delay: 20 })
+$util.launchWeiboLogin = async (page) => {
+  try {
+    console.log('Info: The configured micro-blog account information is as follows：')
+    console.log(secretConfig.weibo)
 
-  let loginBtn = await page.$('.WB_btn_login')
-  await loginBtn.click({delay: 20})
+    await page.type('#userId', secretConfig.weibo.account, { delay: 20 })
+    await page.type('#passwd', secretConfig.weibo.password, { delay: 20 })
 
-  await page.waitFor(600)
+    // UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: 2): TypeError: Cannot read property 'click' of null
+    let loginBtn = await page.$('.WB_btn_login')
+    await loginBtn.click({delay: 20})
+
+    await page.waitFor(600)
+    return Promise.resolve(1)
+  } catch (error) {
+    $util.printWithColor('whoops! Errors appear when launchWeiboLogin：', 'error')
+    console.log(error)
+    return Promise.resolve(0)
+  }
 }
 
 $util.launchGithubLogin = async(page) => {
