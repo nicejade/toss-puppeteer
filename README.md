@@ -1,5 +1,17 @@
 <h1 align="center">Toss Puppeteer</h1>
-Try all kinds of toss about using GoogleChrome puppeteer
+
+[Puppeteer](https://github.com/GoogleChrome/puppeteer)(中文翻译"木偶") 是 Google Chrome 团队官方的无界面（Headless）Chrome 工具，它是一个 `Node` 库，提供了一个高级的 API 来控制 [DevTools协议上的无头版](https://chromedevtools.github.io/devtools-protocol/) Chrome 。也可以配置为使用完整（非无头）的 Chrome。`Chrome` 素来在浏览器界稳执牛耳，因此，Chrome Headless 必将成为 web 应用**自动化测试**的行业标杆。使用 `Puppeteer`，相当于同时具有 Linux 和 Chrome 双端的操作能力，应用场景可谓非常之多。此仓库的建立，即是尝试各种折腾使用 GoogleChrome Puppeteer；以期在好玩的同时，学到更多有意思的操作。
+
+## `Puppeteer` 能做些什么
+
+你可以在浏览器中手动完成的大部分事情都可以使用 `Puppeteer` 完成！你可以从以下几个示例开始：
+
+- 生成页面的截图和PDF。
+- 抓取SPA并生成预先呈现的内容（即“SSR”）。
+- 从网站抓取你需要的内容。
+- 自动表单提交，UI测试，键盘输入等
+- 创建一个最新的自动化测试环境。使用最新的JavaScript和浏览器功能，直接在最新版本的Chrome中运行测试。
+- 捕获您的网站的时间线跟踪，以帮助诊断性能问题。
 
 ## 自动抓取指定网站文章分享至指定网站
 
@@ -57,7 +69,7 @@ npm run initializeGitment
 - [X] 运用 `axios` & `cheerio` 抓取分页并分析，从而得到网站所有文章链接，并存储在数据中；
 - [X] 打开 Github 登录地址： https://github.com/login ，填充用户名、密码，从而完成登录；
 - [X] 遍历所存储链接，并在不同窗口打开（借助 `async` 控制并发）；
-- [X] 在等待 3~5S 后，寻址到初始化按钮，并点击（实际上需要先触发博客页面的 Github login 链接）；
+- [X] 等待，直到初始化按钮显示后并点击（实际上需要先触发博客页面的 Github login 链接）；
 
 ![一键初始化 Gitment 评论系统](https://raw.githubusercontent.com/nicejade/toss-puppeteer/master/screenshot/gitment01.png)
 
