@@ -47,7 +47,7 @@ $util.isLogin = (page) => {
 
 $util.launchWeiboLogin = async (page) => {
   try {
-    console.log('Info: The configured micro-blog account information is as follows：')
+    console.log('\nInfo: The configured micro-blog account information is as follows：')
     console.log(secretConfig.weibo)
 
     await page.type('#userId', secretConfig.weibo.account, { delay: 20 })
@@ -57,7 +57,7 @@ $util.launchWeiboLogin = async (page) => {
     let loginBtn = await page.$('.WB_btn_login')
     await loginBtn.click({delay: 20})
 
-    await page.waitFor(600)
+    await page.waitFor(2 * 1000)
     return Promise.resolve(1)
   } catch (error) {
     $util.printWithColor('whoops! Errors appear when launchWeiboLogin：', 'error')
