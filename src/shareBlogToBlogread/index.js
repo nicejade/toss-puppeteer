@@ -71,7 +71,7 @@ const grabContentYouWantShare = async (browser) => {
     })
   })
 
-  await page.waitFor(1000)
+  await page.waitFor(1 * 1000)
 
   $util.executeScreenshot(page)
 
@@ -80,7 +80,7 @@ const grabContentYouWantShare = async (browser) => {
   let needShareContent = await $util.getWebPageInfo(currentUrl)
   needShareContent.url = currentUrl
 
-  setTimeout(() => { page.close() }, 100)
+  setTimeout(() => { page.close() }, 2 * 1000)
   return needShareContent
 }
 
@@ -112,16 +112,18 @@ const executeSharePlan = async (browser, page) => {
   weiboLoginOra.stop()
   // -----------微博登录---------End;
 
-  await page.waitFor(1000)
+  await page.waitFor(2 * 1000)
 
-  let startShare = ora('Start logging in sina-weobo ...')
-  await page.type('[name=title]', shareContent.title, { delay: 20 })
-  await page.type('[name=url]', shareContent.url, { delay: 20 })
-  await page.type('[name=summary]', shareContent.desc, { delay: 20 })
+  let startShare = ora('✔ Okay, Let puppeteer start to finish the last step - share it ...')
+  await page.type('#textTitle', shareContent.title, { delay: 20 })
+  await page.type('#urlUrl', shareContent.url, { delay: 20 })
+  await page.type('#summary', shareContent.desc, { delay: 20 })
+  startShare.start()
 
   let sublimtBtn = await page.$('[type=submit]')
   await sublimtBtn.click()
 
+  startShare.stop()
   $util.printWithColor('So nice, Has been automatically help you to complete the sharing.', 'success')
 
   await page.waitFor(30 * 1000)
