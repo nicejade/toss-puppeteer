@@ -27,6 +27,11 @@ $util.setConfig = (config) => {
   $config = config
 }
 
+/**
+ * @str: The string to be output to the terminal.
+ * @type: success error warning (default: '')
+ * @color: black red green yellow blue magenta cyan white gray redBright greenBright yellowBright blueBright magentaBright cyanBright whiteBright
+ */
 $util.printWithColor = (str, type = '', color = 'white') => {
   let colorFunc = typeList[type] || chalk[color]
   console.log(colorFunc(str))
@@ -134,10 +139,13 @@ $util.executeScreenshot = async(page) => {
 
 $util.executePrintToPdf = async(page) => {
   if (await $util.isLoadingFinished(page)) {
+    await page.waitFor(1000)
     let pageTitle = await page.title()
     await page.pdf({path: `${$config.savePdfPath}${pageTitle}.pdf`})
     console.log(chalk.magenta(`Pages that have been printed in PDF format is: ${pageTitle}`))
-    page.close()
+    setTimeout(() => {
+      page.close()
+    }, 1000)
   } else {
     setTimeout(() => {
       $util.executePrintToPdf(page)

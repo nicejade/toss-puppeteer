@@ -104,21 +104,18 @@ let concurrentCount = 0
 const printPageToPdf = async (browser, item) => {
   page = await browser.newPage()
   concurrentCount++
-  $util.printWithColor(`Now the number of concurrent is: ${concurrentCount}, What is being printed now is:：${item.href}`, 'success')
-  await page.goto($config.targetOrigin + item.href)
+  $util.printWithColor(`Now the number of concurrent is: ${concurrentCount}, What is being printed now is:：${item.href}`, '', 'magenta')
+  page.goto($config.targetOrigin + item.href)
   await $util.waitForReadyStateComplete(page)
   $util.executePrintToPdf(page)
-  await page.waitFor(1000)
-  page.close()
   concurrentCount--
 }
 
 const executePrintPlan = async (browser, source) => {
   $util.printWithColor(`✔ Okay, Start the print operation.`, 'success')
-  mapLimit(source, 3, async (item) => {
-    await page.waitFor(2000)
+  mapLimit(source, 1, async (item) => {
+    await $util.waitForTimeout(2 * 1000)
     printPageToPdf(browser, item)
   })
-
   // browser.close()
 }
