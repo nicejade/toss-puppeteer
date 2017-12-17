@@ -65,7 +65,7 @@ $util.launchWeiboLogin = async (page) => {
     await page.waitFor(2 * 1000)
     return Promise.resolve(1)
   } catch (error) {
-    $util.printWithColor('whoops! Errors appear when launchWeiboLogin：', 'error')
+    $util.printWithColor('\n💢 whoops! Errors appear when launchWeiboLogin：', 'error')
     console.log(error)
     return Promise.resolve(0)
   }
@@ -90,16 +90,16 @@ $util.launchGithubLogin = async(page) => {
 
 $util.setPageWatcher = (page) => {
   page.on('requestfailed', error => {
-    console.log(chalk.red(`whoops! request failed： ${error.url}`))
+    console.log(chalk.red(`💢 whoops! request failed： ${error.url}`))
   })
 
   page.on('error', (error) => {
-    console.log(chalk.red('whoops! there was an error'))
+    console.log(chalk.red('💢 whoops! there was an error'))
     console.log(error)
   })
 
   page.on('pageerror', (error) => {
-    console.log(chalk.red('whoops! there was an pageerror'))
+    console.log(chalk.red('💢 whoops! there was an pageerror'))
     console.log(error)
   })
 }

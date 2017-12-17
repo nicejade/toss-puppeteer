@@ -13,6 +13,8 @@
 - 创建一个最新的自动化测试环境。使用最新的JavaScript和浏览器功能，直接在最新版本的Chrome中运行测试。
 - 捕获您的网站的时间线跟踪，以帮助诊断性能问题。
 
+>**微注：** 鉴于个人信息不便于提交，已设置 git 提交忽视私密配置文件；如要运行如下几个 Demo，需要手动在 `src/config` 目录下，创建 *secret.js*，格式如 *secretSample.js* 所示(🍀️)。
+
 ## 自动抓取指定网站文章分享至指定网站
 
 这番折腾，是基于 `Puppeteer` 抓取某网页链接（ 具体是在 https://jeffjade.com/categories/Front-End/ 中随机出一篇），将其推送到[技术头条](http://blogread.cn/news/)；其目的在于：练习初步运用 `Puppeteer`。
@@ -29,6 +31,15 @@ npm run shareBlogToBlogread
 - [X] 模拟人为操作，填充用户名和密码并“点击”登录按钮，完成登录(会重新跳转至[技术头条-提交页面](http://blogread.cn/news/submit.php))；
 - [X] 模拟人为操作，填充之前获取到的标题、地址、描述，并“点击”提交，打完收工。
 - [ ] 将其部署于服务器，并设置任务，定时间隔性执行，完成自动按时分享。
+
+### 提交🈯️定链接到指定网站
+
+处于某些分享需要，偶尔会涉及到这样的需求即：分享指定链接(Url)到指定网站；这个相比于如上功能，要省却些步骤。如果愿意折腾的话，还可以提交至多个不同的目标网站，只需增加设定目标地址，登录方式，以及提交表单的信息即可。当然，对于涉及到登录需要复杂的验证网站，额外需要多做些处理。这里只对[技术头条](http://blogread.cn/news/)做了配置，运行如下命令即可：(Update@17-12-17)
+
+```
+Url=https://jeffjade.com/2017/09/28/127-nice-front-end-tutorial/ yarn run shareUrlToTheSite
+url=https://jeffjade.com/2017/09/28/127-nice-front-end-tutorial/ yarn run shareUrlToTheSite
+```
 
 ## 抓取指定网站页面并将其打印成 PDF
 
