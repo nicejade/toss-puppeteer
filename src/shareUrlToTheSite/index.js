@@ -9,7 +9,7 @@ env.NODE_ENV = process.env.NODE_ENV || 'production'
 
 $util.setConfig($config)
 
-puppeteer.launch({ headless: false }).then(async browser => {
+puppeteer.launch({ headless: true }).then(async browser => {
   let page = await browser.newPage()
   page.setViewport({ width: 1024, height: 2048 })
 
@@ -71,8 +71,10 @@ const executeSharePlan = async (browser, page) => {
       }
     })
   })
-  await page.waitFor(1000)
   jump2WeiboOra.stop()
+
+  await page.waitFor(2 * 1000)
+  await $util.waitForReadyStateComplete(page)
 
   // -----------微博登录---------Start;
   let weiboLoginOra = ora('Start logging in sina-weobo ...')
@@ -82,6 +84,7 @@ const executeSharePlan = async (browser, page) => {
   // -----------微博登录---------End;
 
   await page.waitFor(2 * 1000)
+  await $util.waitForReadyStateComplete(page)
 
   let startShare = ora('✔ Okay, Let puppeteer start to finish the last step - share it ...')
   await page.type($config.targetSiteCommitFormInfo.title, shareContent.title, { delay: 20 })
@@ -94,7 +97,8 @@ const executeSharePlan = async (browser, page) => {
   startShare.stop()
 
   $util.printWithColor('✔ So nice, Has been automatically help you to complete the sharing.', 'success')
-  await page.waitFor(30 * 1000)
+  // Shut down automatically after (10 * 1000)ms, If you did not do anything.
+  await page.waitFor(10 * 1000)
   await page.close()
   await browser.close()
 }
