@@ -26,13 +26,13 @@
   "homepage": "https://github.com/nicejade/toss-puppeteer#readme",
   "devDependencies": {
     "chalk": "^2.1.0",
-    "puppeteer": "^0.13.0",
     "shelljs": "^0.7.8"
   },
   "dependencies": {
     "async": "^2.5.0",
     "axios": "0.19.0",
     "cheerio": "^1.0.0-rc.2",
-    "ora": "^1.3.0"
+    "ora": "^1.3.0",
+    "puppeteer-core": "^1.17.0"
   }
 }
