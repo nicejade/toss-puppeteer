@@ -9,7 +9,7 @@ env.NODE_ENV = process.env.NODE_ENV || 'production'
 
 $util.setConfig($config)
 
-puppeteer.launch({ headless: false }).then(async browser => {
+puppeteer.launch({ headless: false, executablePath: '/Users/yunjeff/Google/chrome-mac/Chromium.app/Contents/MacOS/Chromium'}).then(async browser => {
   let page = await browser.newPage()
   page.setViewport({ width: 1024, height: 2048 })
 

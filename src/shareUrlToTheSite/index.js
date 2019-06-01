@@ -1,7 +1,5 @@
-const puppeteer = require('puppeteer')
-const chalk = require('chalk')
+const puppeteer = require('puppeteer-core')
 const ora = require('ora')
-
 const $util = require('./../helper/util.js')
 const $config = require('./config.js')
 
@@ -9,7 +7,12 @@ env.NODE_ENV = process.env.NODE_ENV || 'production'
 
 $util.setConfig($config)
 
-puppeteer.launch({ headless: true }).then(async browser => {
+const options = { 
+  headless: true, 
+  executablePath: $util.getExecutablePath()
+}
+
+puppeteer.launch(options).then(async browser => {
   let page = await browser.newPage()
   page.setViewport({ width: 1024, height: 2048 })
 

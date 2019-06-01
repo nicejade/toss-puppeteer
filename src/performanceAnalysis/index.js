@@ -1,12 +1,15 @@
-const puppeteer = require('puppeteer')
-const chalk = require('chalk')
-
+const puppeteer = require('puppeteer-core')
 const $util = require('./../helper/util.js')
 const $config = require('./config.js')
 
 $util.setConfig($config)
 
-puppeteer.launch({ headless: false }).then(async browser => {
+const options = { 
+  headless: false, 
+  executablePath: $util.getExecutablePath()
+}
+
+puppeteer.launch(options).then(async browser => {
   let page = await browser.newPage()
   page.setViewport({ width: 961, height: 526 })
 

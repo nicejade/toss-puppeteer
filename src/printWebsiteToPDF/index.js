@@ -1,4 +1,4 @@
-const puppeteer = require('puppeteer')
+const puppeteer = require('puppeteer-core')
 const cheerio = require('cheerio')
 const axios = require('axios')
 const chalk = require('chalk')
@@ -14,10 +14,14 @@ $util.setConfig($config)
   NOTE Generating a pdf is currently only supported in Chrome headless.
   https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#pagepdfoptions
  */
-puppeteer.launch({ headless: true }).then(async browser => {
+const options = { 
+  headless: false, 
+  executablePath: $util.getExecutablePath()
+}
+
+puppeteer.launch(options).then(async browser => {
   let page = await browser.newPage()
   page.setViewport({ width: 1024, height: 2048 })
-
   page
     .waitForSelector('img')
     .then(async() => {

@@ -1,7 +1,6 @@
-const puppeteer = require('puppeteer')
+const puppeteer = require('puppeteer-core')
 const cheerio = require('cheerio')
 const axios = require('axios')
-const chalk = require('chalk')
 const ora = require('ora')
 const mapLimit = require('async/mapLimit')
 
@@ -10,7 +9,12 @@ const $config = require('./config.js')
 
 $util.setConfig($config)
 
-puppeteer.launch({ headless: true }).then(async browser => {
+const options = { 
+  headless: true, 
+  executablePath: $util.getExecutablePath()
+}
+
+puppeteer.launch(options).then(async browser => {
   let page = await browser.newPage()
   page.setViewport({ width: 1024, height: 2048 })
 

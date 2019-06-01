@@ -232,4 +232,19 @@ $util.getWebPageInfo = (url) => {
   })
 }
 
+/**
+ * @desc 获得可执行的  Chromium or Chrome 相对路径，根据不同系统；
+ * @return 相对具体路径；
+ */
+$util.getExecutablePath = () => {
+  const platform = process.platform
+  if (platform === 'darwin') {
+    return './../../Google/chrome-mac/Chromium.app/Contents/MacOS/Chromium'
+  } else if (platform === 'linux') {
+    return './../../chrome'
+  } else if (platform === 'win32' || platform === 'win64') {
+    return './../../chrome.exe'
+  }
+}
+
 module.exports = $util

@@ -2,7 +2,7 @@ require('shelljs/global')
 env.NODE_ENV = process.env.NODE_ENV || 'testing'
 
 let screenshotPath = './dist/screenshot/',
-  currentPageUrl = 'https://jeffjade.com/categories/Front-End/',
+  currentPageUrl = 'https://www.jeffjade.com/categories/Front-End/',
   shareTargetPath = 'http://blogread.cn/news/submit.php',
   loginUserName = '',
   loginUserPwd = ''
