@@ -15,7 +15,7 @@ $util.setConfig($config)
   https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#pagepdfoptions
  */
 const options = { 
-  headless: false, 
+  headless: true, 
   executablePath: $util.getExecutablePath()
 }
 
@@ -24,15 +24,13 @@ puppeteer.launch(options).then(async browser => {
   page.setViewport({ width: 1024, height: 2048 })
   page
     .waitForSelector('img')
-    .then(async() => {
+    .then(() => {
       executeCrawlPlan(browser, page)
     })
-
-  page.on('requestfinished', result => {
-    if (result.url.includes('clustrmaps.com')) {
+    page.once('load', () => {
+      console.log(chalk.green('Good, Page loaded!'))
       $util.onListenUrlChange(page)
-    }
-  })
+    })
 
   page.on('error', (error) => {
     console.log(chalk.red('whoops! there was an error'))
@@ -49,16 +47,10 @@ puppeteer.launch(options).then(async browser => {
 
 const executeCrawlPlan = async (browser, page) => {
   $util.printWithColor(`✔ Start crawling all article links...`, 'success')
-  let numList = await page.evaluate(async() => {
-    let pageNumList = [...document.querySelectorAll('#page-nav .page-number')]
-    return pageNumList.map(item => {
-      return item.text
-    })
-  })
   // 获取到分页总数目(从左到右，有小到大，所以可以如下处置)
-  let totalNum = +numList[numList.length - 1]
+  const totalPageNum = 11
   let pageLinkArr = [$config.targetWebsite]
-  for (let i = 2; i <= totalNum; i++) {
+  for (let i = 2; i <= totalPageNum; i++) {
     pageLinkArr.push(`${$config.targetWebsite}/page/${i}`)
   }
 
@@ -69,7 +61,7 @@ const executeCrawlPlan = async (browser, page) => {
       getArticleLink(citem).then(result => {
         statisticsCount++
         articleLinkArr = articleLinkArr.concat(result)
-        if (statisticsCount === totalNum) {
+        if (statisticsCount === totalPageNum) {
           executePrintPlan(browser, articleLinkArr)
         }
       })
@@ -108,9 +100,9 @@ let concurrentCount = 0
 const printPageToPdf = async (browser, item) => {
   page = await browser.newPage()
   concurrentCount++
-  $util.printWithColor(`Now the number of concurrent is: ${concurrentCount}, What is being printed now is:：${item.href}`, '', 'magenta')
+  $util.printWithColor(`Now the number of concurrent is: ${concurrentCount}, What is being printed now is: ${item.href}`, '', 'magenta')
   page.goto($config.targetOrigin + item.href)
-  await $util.waitForReadyStateComplete(page)
+  await $util.waitForTimeout(2 * 1000)
   $util.executePrintToPdf(page)
   concurrentCount--
 }
