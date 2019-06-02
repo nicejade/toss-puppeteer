@@ -15,9 +15,15 @@
 
 >**微注：** 鉴于个人信息不便于提交，已设置 git 提交忽视私密配置文件；如要运行如下几个 Demo，需要手动在 `src/config` 目录下，创建 *secret.js*，格式如 *secretSample.js* 所示(🍀️)。
 
+>**备注：** 鉴于 `Puppeteer` 需要 `Chromium`，但，即便处于 Science 上网的姿态， 也会遇到 Chromium 无法成功下载的问题；所以在最新的修改中，已经其替换为 [puppeteer-core](https://github.com/GoogleChrome/puppeteer#puppeteer-core) （默认情况下不下载 Chromium，使用时需要确保您安装的 `puppeteer-core` 版本与您要连接的浏览器兼容）。在实际使用时候，即便已然按照说明操作，但依旧会报如下错误：
+>
+>Error: Chromium revision is not downloaded. Run "npm install" or "yarn install"
+>
+>因此只好采取手动下载 `Chromium` 的方式解决；因此在运行此仓库时候，您需要在 [Puppeteer API Tip-Of-Tree](https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#) 根据指定 Puppeteer 下载对应 Chromium，然后放置到项根目录即可（项目中已对各不同系统做了适配，国内用户可以在 [Taobao Mirrors](https://npm.taobao.org/mirrors/chromium-browser-snapshots/) 根据系统按需下载）。
+
 ## 自动抓取指定网站文章分享至指定网站
 
-这番折腾，是基于 `Puppeteer` 抓取某网页链接（ 具体是在 https://jeffjade.com/categories/Front-End/ 中随机出一篇），将其推送到[技术头条](http://blogread.cn/news/)；其目的在于：练习初步运用 `Puppeteer`。
+这番折腾，是基于 `Puppeteer` 抓取某网页链接（ 具体是在 https://jefwww.fjade.com/categories/Front-End/ 中随机出一篇），将其推送到[技术头条](http://blogread.cn/news/)；其目的在于：练习初步运用 `Puppeteer`。
 
 ### 运行命令
 ```
@@ -26,7 +32,7 @@ npm i (更推荐 yarn)
 npm run shareBlogToBlogread
 ```
 ### 步骤详述
-- [X] 打开[技术头条-提交页面](http://blogread.cn/news/submit.php)，同时到 [晚晴幽草轩-Front-End](https://jeffjade.com/categories/Front-End/) 随机抓取一篇文章，获取到标题、地址、描述。
+- [X] 打开[技术头条-提交页面](http://blogread.cn/news/submit.php)，同时到 [晚晴幽草轩-Front-End](https://www.jeffjade.com/categories/Front-End/) 随机抓取一篇文章，获取到标题、地址、描述。
 - [X] 模拟人为操作，点开“用微博登录”按钮(会跳转至微博登录页面)；
 - [X] 模拟人为操作，填充用户名和密码并“点击”登录按钮，完成登录(会重新跳转至[技术头条-提交页面](http://blogread.cn/news/submit.php))；
 - [X] 模拟人为操作，填充之前获取到的标题、地址、描述，并“点击”提交，打完收工。
@@ -37,8 +43,8 @@ npm run shareBlogToBlogread
 处于某些分享需要，偶尔会涉及到这样的需求即：分享指定链接(Url)到指定网站；这个相比于如上功能，要省却些步骤。如果愿意折腾的话，还可以提交至多个不同的目标网站，只需增加设定目标地址，登录方式，以及提交表单的信息即可。当然，对于涉及到登录需要复杂的验证网站，额外需要多做些处理。这里只对[技术头条](http://blogread.cn/news/)做了配置，运行如下命令即可：(Update@17-12-17)
 
 ```
-Url=https://jeffjade.com/2017/09/28/127-nice-front-end-tutorial/ yarn run shareUrlToTheSite
-url=https://jeffjade.com/2017/09/28/127-nice-front-end-tutorial/ yarn run shareUrlToTheSite
+Url=https://jeffjade.com/2017/09/28/127-nice-front-end-tutorial/ yarn shareUrlToTheSite
+url=https://jeffjade.com/2017/09/28/127-nice-front-end-tutorial/ yarn shareUrlToTheSite
 ```
 
 ## 抓取指定网站页面并将其打印成 PDF
@@ -69,7 +75,8 @@ npm run printWebsiteToPDF
 这提及的 [Gitment](https://github.com/imsun/gitment) 是基于 GitHub Issues 的评论系统；它本身的一些特征，使得它存在很多优势，对于维护“程序”相关话题博客。所以，个人博客[晚晴幽草轩](https://jeffjade.com)就采用此评论系统；但，它也会存在一些问题，譬如需要主动初始化评论,[initialize-your-comments](https://github.com/imsun/gitment#4-initialize-your-comments)，当然也可以运用些工具协助完成✅。对于已经写了 140+ 篇博文的[晚晴幽草轩](https://jeffjade.com)，这实在很有必要；所以，这里谈及即，使用 `Puppeteer` 一键来初始化 `Gitment` 评论系统（需要注明的是，每个系统结构有所区别，这里只具有些参考性，却不能直接加以使用）。
 
 ### 运行命令
-```
+
+```bash
 git clone https://github.com/nicejade/toss-puppeteer
 npm i (更推荐 yarn)
 npm run initializeGitment
@@ -90,14 +97,15 @@ npm run initializeGitment
 
 可以使用 `tracing.start` 和 `tracing.stop` 创建一个可以在 Chrome 开发工具或时间线查看器中打开的跟踪文件(每个浏览器一次只能激活一个跟踪)，具体参见 [Puppeteer Trace Api](https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#class-tracing)。
 
-```
+```bash
 await page.tracing.start({path: 'trace.json'})
 await page.goto('https://www.google.com')
 await page.tracing.stop()
 ```
 
 ### 运行命令
-```
+
+```bash
 git clone https://github.com/nicejade/toss-puppeteer
 npm i (更推荐 yarn)
 npm run performanceAnalysis
@@ -106,3 +114,19 @@ npm run performanceAnalysis
 ![一键初始化 Gitment 评论系统](https://raw.githubusercontent.com/nicejade/toss-puppeteer/master/screenshot/blog-lovejade-cn-trace.jpg)
 
 对于 Chrome Performance／Timeline，如何使用，可以参见 [Chrome 开发者工具](https://developers.google.com/web/tools/chrome-devtools/?hl=zh-cn)，或者移步至 [Chrome Tutorial](https://github.com/nicejade/nice-front-end-tutorial/blob/master/tutorial/chrome-tutorial.md)，这里有比较详尽的，不断补充修缮的参考资料。
+
+## 相关链接
+
+* [**倾城之链**](https://nicelinks.site/?utm_source=github.com)
+* [About Me](https://about.me/nicejade?utm_source=github.com)
+* [个人博客](https://jeffjade.com/nicelinks?utm_source=github.com)
+* [静轩之别苑](https://quickapp.lovejade.cn/?utm_source=github.com)
+* [静晴轩别苑](https://nice.lovejade.cn/?utm_source=github.com)
+* [吾意静晴轩](https://docz.lovejade.cn/?utm_source=github.com)
+* [天意人间舫](https://blog.lovejade.cn/?utm_source=github.com)
+* [新浪微博](https://weibo.com/jeffjade?utm_source=github.com)
+* [知乎主页](https://www.zhihu.com/people/yang-qiong-pu/)
+* [简书主页](https://www.jianshu.com/u/9aae3d8f4c3d)
+* [SegmentFault](https://segmentfault.com/u/jeffjade)
+* [Twitter](https://twitter.com/nicejadeyang)
+* [Facebook](https://www.facebook.com/nice.jade.yang)
