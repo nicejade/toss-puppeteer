@@ -1,10 +1,14 @@
 module.exports = {
   weibo: {
     account: 'your-weibo-account',
-    password: 'your-pwd'
+    password: 'your-weibo-pwd'
   },
   github: {
-    account: 'your-weibo-account',
-    password: 'your-pwd'
+    account: 'your-github-account',
+    password: 'your-github-pwd'
+  },
+  hacpai: {
+    account: 'your-hacpai-account',
+    password: 'your-hacpai-pwd'
   }
 }

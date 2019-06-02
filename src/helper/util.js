@@ -191,10 +191,10 @@ $util.waitForTimeout = (delay) => {
  * @param    {Number}   cycleFactor [每次轮询的间隔时间(ms)，默认 10]
  * @return   {Boolean}              [等待(timesLimit*cycleFactor)ms后，页面是否加载完毕]
  */
-$util.waitForReadyStateComplete = (page, timesLimit = 600, cycleFactor = 10) => {
+$util.waitForReadyStateComplete = (page, timesLimit = 600, cycleFactor = 20) => {
   return new Promise(async (resolve, reject) => {
     let i = 0
-    let isCompleted = false
+    let isCompleted = await $util.isLoadingFinished(page)
     while (i < timesLimit && !isCompleted) {
       $util.printWithColor(`\n♻️  Wait for page load completion，Now the number of polling is: ${i}`, '')
       isCompleted = await $util.isLoadingFinished(page)
