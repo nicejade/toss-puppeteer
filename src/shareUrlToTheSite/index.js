@@ -9,6 +9,7 @@ $util.setConfig($config)
 
 const options = { 
   headless: true, 
+  slowMo: 20,
   executablePath: $util.getExecutablePath()
 }
 
@@ -57,7 +58,7 @@ const grabContentYouWantShare = async (browser) => {
 }
 
 const executeSharePlan = async (browser, page) => {
-  let getContentOra = ora('Start crawling content you want share...')
+  let getContentOra = ora('Start crawling content you want share...   ')
   getContentOra.start()
   let shareContent = await grabContentYouWantShare(browser)
   getContentOra.stop()
@@ -66,18 +67,12 @@ const executeSharePlan = async (browser, page) => {
 
   let jump2WeiboOra = ora(`(need login with weibo)Okay, Let's jump to there...`)
   jump2WeiboOra.start()
-  await page.evaluate(async() => {
-    let navbarList = [...document.querySelectorAll('.panel-body a')]
-    navbarList.forEach(item => {
-      if (item.href.includes('api.weibo.com')) {
-        item.click()
-      }
-    })
-  })
+  const jump2WeiboBtn = await page.$('.panel-body a')
+  await jump2WeiboBtn.click({delay: 20})
   jump2WeiboOra.stop()
 
-  await page.waitFor(2 * 1000)
   await $util.waitForReadyStateComplete(page)
+  await page.waitFor(2 * 1000)
 
   // -----------微博登录---------Start;
   let weiboLoginOra = ora('Start logging in sina-weobo ...')
@@ -87,7 +82,6 @@ const executeSharePlan = async (browser, page) => {
   // -----------微博登录---------End;
 
   await page.waitFor(2 * 1000)
-  await $util.waitForReadyStateComplete(page)
 
   let startShare = ora('✔ Okay, Let puppeteer start to finish the last step - share it ...')
   await page.type($config.targetSiteCommitFormInfo.title, shareContent.title, { delay: 20 })

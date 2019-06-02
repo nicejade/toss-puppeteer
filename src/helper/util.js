@@ -116,10 +116,12 @@ $util.getCurrentFullPath = (page) => {
  * @param    {Object}   page [browser实例Page]
  * @return   {Boolean}       [页面是否加载完毕]
  */
-$util.isLoadingFinished = (page) => {
+$util.isLoadingFinished = async (page) => {
+  await page.waitForNavigation()
   return page.evaluate(() => {
     // document.readyState: loading / 加载；interactive / 互动；complete / 完成
-    return document.readyState === 'complete'
+    const isCompleted = document.readyState === 'complete'
+    return Promise.resolve(isCompleted)
   })
 }
 
@@ -192,9 +194,11 @@ $util.waitForTimeout = (delay) => {
 $util.waitForReadyStateComplete = (page, timesLimit = 600, cycleFactor = 10) => {
   return new Promise(async (resolve, reject) => {
     let i = 0
-    while (i < timesLimit) {
-      $util.printWithColor(`♻️  Wait for page load completion，Now the number of polling is: ${i}`, '')
-      if (await $util.isLoadingFinished(page)) {
+    let isCompleted = false
+    while (i < timesLimit && !isCompleted) {
+      $util.printWithColor(`\n♻️  Wait for page load completion，Now the number of polling is: ${i}`, '')
+      isCompleted = await $util.isLoadingFinished(page)
+      if (isCompleted) {
         $util.printWithColor(`😊  Okay, The time to wait for the page to load to complete is: ${i * cycleFactor} ms`, 'success')
         return resolve(true)
       }
