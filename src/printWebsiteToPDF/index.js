@@ -20,7 +20,7 @@ const options = {
 }
 
 puppeteer.launch(options).then(async browser => {
-  let page = await browser.newPage()
+  let page = (await browser.pages())[0]
   page.setViewport({ width: 1024, height: 2048 })
   page
     .waitForSelector('img')
@@ -98,7 +98,7 @@ const getArticleLink = (url) => {
 
 let concurrentCount = 0
 const printPageToPdf = async (browser, item) => {
-  page = await browser.newPage()
+  page = (await browser.pages())[0]
   concurrentCount++
   $util.printWithColor(`Now the number of concurrent is: ${concurrentCount}, What is being printed now is: ${item.href}`, '', 'magenta')
   page.goto($config.targetOrigin + item.href)

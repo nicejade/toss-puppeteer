@@ -10,7 +10,7 @@ const secretConfig = require('./../config/secret')
 
 ;(async () => {
   const browser = await puppeteer.launch(options)
-  const page = await browser.newPage()
+  const page = (await browser.pages())[0]
   await page.goto('https://hacpai.com/login')
   page
     .waitForSelector('img')

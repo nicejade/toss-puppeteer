@@ -10,7 +10,7 @@ const options = {
 }
 
 puppeteer.launch(options).then(async browser => {
-  let page = await browser.newPage()
+  let page = (await browser.pages())[0]
   page.setViewport({ width: 961, height: 526 })
 
   page

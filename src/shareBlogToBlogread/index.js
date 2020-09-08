@@ -15,7 +15,7 @@ const options = {
 }
 
 puppeteer.launch(options).then(async browser => {
-  let page = await browser.newPage()
+  let page = (await browser.pages())[0]
   page.setViewport({ width: 1024, height: 2048 })
 
   $util.setPageWatcher(page)
@@ -47,7 +47,7 @@ const grabContentYouWantShare = async (browser) => {
   let pageLimit = 4
   let pageNum = $util.getRandom(1, pageLimit)
 
-  let page = await browser.newPage()
+  let page = (await browser.pages())[0]
   page.setViewport({ width: 1536, height: 900 })
 
   let linkSuffix = pageNum > 1 ? `page/${pageNum}` : ''

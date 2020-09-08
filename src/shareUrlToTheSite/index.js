@@ -14,7 +14,7 @@ const options = {
 }
 
 puppeteer.launch(options).then(async browser => {
-  let page = await browser.newPage()
+  let page = (await browser.pages())[0]
   page.setViewport({ width: 1024, height: 2048 })
 
   $util.setPageWatcher(page)
@@ -39,7 +39,7 @@ puppeteer.launch(options).then(async browser => {
 })
 
 const grabContentYouWantShare = async (browser) => {
-  let page = await browser.newPage()
+  let page = (await browser.pages())[0]
   page.setViewport({ width: 1536, height: 900 })
 
   page.goto($config.targetShareUrl)

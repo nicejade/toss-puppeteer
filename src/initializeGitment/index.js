@@ -15,7 +15,7 @@ const options = {
 }
 
 puppeteer.launch(options).then(async browser => {
-  let page = await browser.newPage()
+  let page = (await browser.pages())[0]
   page.setViewport({ width: 1024, height: 2048 })
 
   $util.setPageWatcher(page)
@@ -113,7 +113,7 @@ const findAndTriggerInitBtn = async (page) => {
 
 let concurrentCount = 0
 const executeInitializePlan = async (browser, item) => {
-  let cpage = await browser.newPage()
+  let cpage = (await browser.pages())[0]
   concurrentCount++
   $util.printWithColor(`Now the number of concurrent is: ${concurrentCount}, Trying for: ${item.href}`, '')
   await cpage.goto($config.targetOrigin + item.href)
@@ -141,7 +141,7 @@ const startExecutePlan = async (browser, source) => {
   // --------------------Login With Github----------------------Start
   let githubLoginOra = ora('Start logging in github ...')
   githubLoginOra.start()
-  let page = await browser.newPage()
+  let page = (await browser.pages())[0]
   await $util.launchGithubLogin(page)
   githubLoginOra.stop()
   $util.printWithColor(`✔ Okay, Already done for you about github auto login.`, 'success')
