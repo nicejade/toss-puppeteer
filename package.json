@@ -26,7 +26,7 @@
   "homepage": "https://github.com/nicejade/toss-puppeteer#readme",
   "devDependencies": {
     "chalk": "^2.1.0",
-    "shelljs": "^0.7.8"
+    "shelljs": "^0.8.5"
   },
   "dependencies": {
     "async": "^2.5.0",
